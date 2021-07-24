@@ -1,9 +1,5 @@
-FROM httpd:2.4
+FROM bash
 
-RUN apt-get update \
-    && \
-    apt-get -y install \
-       curl \
-       gridsite-clients \
-    && \
-    apt-get clean
+COPY bin/generateHrStatsForPeriod.sh /usr/local/bin
+
+ENTRYPOINT [ "/usr/local/bin/bash", "-x", "/usr/local/bin/generateHrStatsForPeriod.sh" ]
