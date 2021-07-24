@@ -171,12 +171,12 @@ generateCSVStatLine ()
 echo '"Date";"Action";"Status";"login PC";"Reference Document";"VIN";"Adresse IP";"Navigateur"'
 
 sort \
-    --numeric-sort \
-    --key=1 \
-    -o /tmp/starts_sorted.txt \
+    -n \
+    -k 1 \
+    -o /tmp/stats_sorted.txt \
     ${all_stat_files}
 
-cat /tmp/starts_sorted.txt | \
+cat /tmp/stats_sorted.txt | \
     while read -r line
     do
 	generateCSVStatLine "${line}"
