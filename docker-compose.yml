@@ -1,0 +1,15 @@
+# -*- mode: indented-text; tab-width: 3; indent-tabs-mode: nil -*-
+
+version: '3'
+
+services:
+
+  reverse-proxy-rh-stat-generator:
+     build: .  
+     environment:
+        - STAT_DATA_DIR="/var/pc_stats"
+        - TZ=Europe/Paris
+     volumes:
+        - /home/bernhara/CONTAINERs/PCApacheReverseProxy_RUN/pc_to_cs_apache_reverse_proxy/pc_stats/:/var/pc_stats/:ro
+        - ./pc_rh_stats/:/var/pc_rh_stats/
+     command: -w -1 -o /var/pc_rh_stats/zz.csv

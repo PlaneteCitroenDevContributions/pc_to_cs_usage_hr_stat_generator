@@ -12,7 +12,7 @@ Usage ()
     msg="$@"
     (
 	echo "ERROR: ${msg}"
-	echo "Usage ${PGM_BASENAME} [-w|--week <week number>]"
+	echo "Usage ${PGM_BASENAME} [-w|--week <week number>] [-o|--out <output csv name>]"
 	echo "	If week number is a negative integer, specifies a relative week number to current week number"
     ) 1>&2
     exit 1
@@ -25,6 +25,10 @@ do
 	-w | --week )
 	    shift
 	    week_number_arg="$1"
+	    ;;
+	-o | --out )
+	    shift
+	    outfile_arg="$1"
 	    ;;
 	* )
 	    Usage "bad arg: $1"
@@ -175,6 +179,11 @@ sort \
     -k 1 \
     -o /tmp/stats_sorted.txt \
     ${all_stat_files}
+
+if [[ -n "${outfile_arg}" ]]
+then
+    exec 1>"${outfile_arg}"
+fi
 
 cat /tmp/stats_sorted.txt | \
     while read -r line
