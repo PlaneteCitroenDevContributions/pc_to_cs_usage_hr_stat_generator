@@ -92,7 +92,11 @@ fi
 
 : ${STAT_DATA_DIR:="/var/pc_stats"}
 
-if [[ -d "${STAT_DATA_DIR}" && -d "${STAT_DATA_DIR}" ]]
+ls -ld "${STAT_DATA_DIR}"
+ls -l /var
+mount
+
+if [[ -d ${STAT_DATA_DIR} ]] # && [[ -r "${STAT_DATA_DIR}" ]]
 then
     :
 else
