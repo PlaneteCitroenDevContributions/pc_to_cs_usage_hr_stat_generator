@@ -1,6 +1,6 @@
 # -*- mode: indented-text; tab-width: 3; indent-tabs-mode: nil -*-
 
-version: '3'
+version: '3.4'
 
 services:
 
@@ -12,4 +12,10 @@ services:
      volumes:
         - /home/bernhara/CONTAINERs/PCApacheReverseProxy_RUN/pc_to_cs_apache_reverse_proxy/pc_stats/:/var/pc_stats/:ro
         - ./pc_rh_stats/:/var/pc_rh_stats/
-     command: -w -1 -o /var/pc_rh_stats/zz.csv
+        - CSV_PC_STATs:/CSV_PC_STATs/:ro
+     command: -w -1 -o ${OUT_FILE_NAME:-/var/pc_rh_stats/stats.csv}
+
+volumes:
+
+   CSV_PC_STATs:
+      name: VOL_CSV_PC_STATs
