@@ -10,9 +10,9 @@ services:
         - STAT_DATA_DIR="/var/pc_stats"
         - TZ=Europe/Paris
      volumes:
-        - /home/bernhara/CONTAINERs/PCApacheReverseProxy_RUN/pc_to_cs_apache_reverse_proxy/pc_stats/:/var/pc_stats/:ro
-        - ./pc_rh_stats/:/var/pc_rh_stats/
-        - CSV_PC_STATs:/CSV_PC_STATs/:ro
+        - "/home/bernhara/CONTAINERs/PCApacheReverseProxy_RUN/pc_to_cs_apache_reverse_proxy/pc_stats/:/var/pc_stats/:ro"
+        - "./pc_rh_stats/:/var/pc_rh_stats/"
+        - "CSV_PC_STATs:/CSV_PC_STATs/:ro"
      command: -w -1 -o ${OUT_FILE_NAME:-/var/pc_rh_stats/stats.csv}
 
 volumes:
