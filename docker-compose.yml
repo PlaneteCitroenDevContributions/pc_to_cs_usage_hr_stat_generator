@@ -5,15 +5,18 @@ version: '3.4'
 services:
 
   reverse-proxy-rh-stat-generator:
-     build: .  
+     build: .
+     image: reverse-proxy-rh-stat-generator:latest
      environment:
-        - STAT_DATA_DIR="/var/pc_stats"
-        - TZ=Europe/Paris
+        - "STAT_DATA_DIR=/var/pc_stats"
+        - "TZ=Europe/Paris"
      volumes:
         - "/home/bernhara/CONTAINERs/PCApacheReverseProxy_RUN/pc_to_cs_apache_reverse_proxy/pc_stats/:/var/pc_stats/:ro"
         - "./pc_rh_stats/:/var/pc_rh_stats/"
         - "CSV_PC_STATs:/CSV_PC_STATs/:ro"
      command: -w -1 -o ${OUT_FILE_NAME:-/var/pc_rh_stats/stats.csv}
+     # generate data as NextCloud www-data user
+     user: "33:33"
 
 volumes:
 
