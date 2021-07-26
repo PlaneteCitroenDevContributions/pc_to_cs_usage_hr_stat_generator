@@ -64,9 +64,9 @@ fi
 if [[ ${week_number_arg} -lt 0 ]]
 then
     # compute a relative week number
-    current_week_number=$( date '+%U' )
+    current_week_number=$( date '+%V' )
     abs_week_number=$(( ${current_week_number} + ${week_number_arg} ))
-    if [[ ${abs_week_number} -lt 0 ]]
+    if [[ ${abs_week_number} -lt 1 ]]
     then
 	Usage "relative week number ${week_number_arg} is too large"
 	#NOT REACHED
@@ -74,12 +74,12 @@ then
 	week_number=${abs_week_number}
     fi
 else
-    # its an absolute week number in [0..52]
-    if [[ ${week_number_arg} -le 52 ]]
+    # its an absolute week number in [1..53]
+    if [[ ${week_number_arg} -le 53 ]]
     then
 	week_number=${week_number_arg}
     else
-	Usage "week number should be in range [0..52]"
+	Usage "week number should be in range [1..53]"
 	#NOT REACHED
     fi
 fi
