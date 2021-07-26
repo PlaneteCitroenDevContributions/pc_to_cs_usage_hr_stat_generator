@@ -93,10 +93,11 @@ fi
 : ${STAT_DATA_DIR:="/var/pc_stats"}
 
 ls -ld "${STAT_DATA_DIR}"
+id
 ls -l /var
 mount
 
-if [[ -d ${STAT_DATA_DIR} ]] # && [[ -r "${STAT_DATA_DIR}" ]]
+if [[ -d "${STAT_DATA_DIR}" ]] # && [[ -r "${STAT_DATA_DIR}" ]]
 then
     :
 else
