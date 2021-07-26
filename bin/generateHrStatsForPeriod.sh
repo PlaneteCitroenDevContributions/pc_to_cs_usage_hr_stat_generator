@@ -59,8 +59,6 @@ else
     #NOT REACHED
 fi
 
-# TODO: if week number is negative, compute real week number
-
 if [[ ${week_number_arg} -lt 0 ]]
 then
     # compute a relative week number
