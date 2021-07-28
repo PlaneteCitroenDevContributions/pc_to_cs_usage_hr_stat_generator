@@ -1,6 +1,6 @@
 FROM fedora
 
-RUN dnf install gnumeric \
+RUN dnf install -y gnumeric emacs-nox \
     && dnf clean all
 
 COPY bin/generateHrStatsForPeriod.sh /usr/local/bin
