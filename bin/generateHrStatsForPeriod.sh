@@ -175,6 +175,12 @@ generateCSVStatLine ()
 # generate CSV file
 #
 
+# if outfile arg is provided, redirect output
+if [[ -n "${outfile_arg}" ]]
+then
+    exec 1>"${outfile_arg}"
+fi
+
 echo '"Date";"Action";"Status";"login PC";"Reference Document";"VIN";"Adresse IP";"Navigateur"'
 
 sort \
@@ -182,11 +188,6 @@ sort \
     -k 1 \
     -o /tmp/stats_sorted.txt \
     ${all_stat_files}
-
-if [[ -n "${outfile_arg}" ]]
-then
-    exec 1>"${outfile_arg}"
-fi
 
 cat /tmp/stats_sorted.txt | \
     while read -r line
