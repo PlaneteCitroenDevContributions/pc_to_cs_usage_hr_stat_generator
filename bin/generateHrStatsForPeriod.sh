@@ -200,4 +200,4 @@ then
     exec 1>"${outfile_arg}"
 fi
 
-ssconvert 
+ssconvert --verbose '--import-type=Gnumeric_stf:stf_csvtab' '--export-type=Gnumeric_Excel:xlsx' /tmp/stats.csv
