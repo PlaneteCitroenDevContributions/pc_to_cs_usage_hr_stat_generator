@@ -3,7 +3,7 @@
 HERE=$( dirname "$0" )
 PGM_BASENAME=$( basename "$0" )
 
-CSV_SEPARATOR=';'
+: ${CSV_SEPARATOR:=','}
 
 #
 # check arg = week number
@@ -194,10 +194,12 @@ rm -f /tmp/stats.csv
 	done
 ) > /tmp/stats.csv
 
+ssconvert --verbose '--import-type=Gnumeric_stf:stf_csvtab' '--export-type=Gnumeric_Excel:xlsx2' /tmp/stats.csv /tmp/stats.xlsx
+
 # if outfile arg is provided, redirect output
 if [[ -n "${outfile_arg}" ]]
 then
-    exec 1>"${outfile_arg}"
+    cp /tmp/stats.xlsx "${outfile_arg}"
+else
+    cat /tmp/stats.xlsx
 fi
-
-ssconvert --verbose '--import-type=Gnumeric_stf:stf_csvtab' '--export-type=Gnumeric_Excel:xlsx' /tmp/stats.csv
