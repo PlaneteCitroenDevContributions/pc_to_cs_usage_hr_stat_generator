@@ -3,6 +3,8 @@
 HERE=$( dirname "$0" )
 PGM_BASENAME=$( basename "$0" )
 
+CSV_SEPARATOR=';'
+
 #
 # check arg = week number
 #
@@ -167,7 +169,7 @@ generateCSVStatLine ()
       
 
     csv_date=$( date --date "@${epoch_time}" '+%d/%m/%Y %T' )
-    echo "\"${csv_date}\";\"${action}\";\"${status}\";\"${pc_login}\";\"${doc_ref}\";\"${vin}\";\"${real_ip}\";\"${user_agent}\""
+    echo "\"${csv_date}\"${CSV_SEPARATOR}\"${action}\"${CSV_SEPARATOR}\"${status}\"${CSV_SEPARATOR}\"${pc_login}\"${CSV_SEPARATOR}\"${doc_ref}\"${CSV_SEPARATOR}\"${vin}\"${CSV_SEPARATOR}\"${real_ip}\"${CSV_SEPARATOR}\"${user_agent}\""
 
 }
 
@@ -175,22 +177,27 @@ generateCSVStatLine ()
 # generate CSV file
 #
 
+rm -f /tmp/stats.csv
+(
+    echo "\"Date\"${CSV_SEPARATOR}\"Action\"${CSV_SEPARATOR}\"Status\"${CSV_SEPARATOR}\"login PC\"${CSV_SEPARATOR}\"Reference Document\"${CSV_SEPARATOR}\"VIN\"${CSV_SEPARATOR}\"Adresse IP\"${CSV_SEPARATOR}\"Navigateur\""
+
+    sort \
+	-n \
+	-k 1 \
+	-o /tmp/stats_sorted.txt \
+	${all_stat_files}
+
+    cat /tmp/stats_sorted.txt | \
+	while read -r line
+	do
+	    generateCSVStatLine "${line}"
+	done
+) > /tmp/stats.csv
+
 # if outfile arg is provided, redirect output
 if [[ -n "${outfile_arg}" ]]
 then
     exec 1>"${outfile_arg}"
 fi
 
-echo '"Date";"Action";"Status";"login PC";"Reference Document";"VIN";"Adresse IP";"Navigateur"'
-
-sort \
-    -n \
-    -k 1 \
-    -o /tmp/stats_sorted.txt \
-    ${all_stat_files}
-
-cat /tmp/stats_sorted.txt | \
-    while read -r line
-    do
-	generateCSVStatLine "${line}"
-    done
+ssconvert 
