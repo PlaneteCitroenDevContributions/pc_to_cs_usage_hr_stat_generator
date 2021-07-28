@@ -1,8 +1,9 @@
-FROM bash
+FROM fedora
 
-RUN apk add --no-cache gnumeric
+RUN dnf install gnumeric \
+    && dnf clean all
 
 COPY bin/generateHrStatsForPeriod.sh /usr/local/bin
 
-ENTRYPOINT [ "/usr/local/bin/bash", "-x", "/usr/local/bin/generateHrStatsForPeriod.sh" ]
+ENTRYPOINT [ "/bin/bash", "-x", "/usr/local/bin/generateHrStatsForPeriod.sh" ]
 #ENTRYPOINT [ "/usr/local/bin/bash", "/usr/local/bin/generateHrStatsForPeriod.sh" ]
