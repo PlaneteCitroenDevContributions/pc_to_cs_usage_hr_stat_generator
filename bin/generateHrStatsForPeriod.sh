@@ -108,7 +108,16 @@ fi
 # example file name: stat_Y=2021=Y_M=03=M_D=24=D_d=3=d_W=12=W_156.txt
 all_stat_files=$(
     ls -1 "${STAT_DATA_DIR}/"stat_Y=${STATS_FOR_YEAR}=Y*W=${week_number}=W*.txt 2>/dev/null
-)
+	      )
+
+if [[ -z $( echo "${all_stat_files}" | tr -d '[:blank:]' ) ]]
+then
+    # We got a empty string => no file matched
+    # generate a simple empty file
+    touch /tmp/no_rproxy_stats.txt
+    all_stat_files=/tmp/no_rproxy_stats.txt
+fi
+    
 
 generateCSVStatLine ()
 {
