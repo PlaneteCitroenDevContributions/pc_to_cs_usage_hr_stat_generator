@@ -3,6 +3,8 @@
 HERE=$( dirname "$0" )
 PGM_BASENAME=$( basename "$0" )
 
+: ${STAT_DATA_DIR:="/var/pc_stats"}
+
 : ${CSV_SEPARATOR:=','}
 
 #
@@ -89,8 +91,6 @@ fi
 #
 # Check the folder containing the stats
 # =====================================
-
-: ${STAT_DATA_DIR:="/var/pc_stats"}
 
 ls -ld "${STAT_DATA_DIR}"
 id
