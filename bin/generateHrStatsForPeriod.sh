@@ -16,7 +16,7 @@ Usage ()
     msg="$@"
     (
 	echo "ERROR: ${msg}"
-	echo "Usage ${PGM_BASENAME} [-w|--week <week number>] [-o|--out <output csv name>]"
+	echo "Usage ${PGM_BASENAME} (-w|--week <week number>)|(-m|--mounth <month number>) [-o|--out <output csv name>]"
 	echo "	If week number is a negative integer, specifies a relative week number to current week number"
     ) 1>&2
     exit 1
@@ -29,6 +29,10 @@ do
 	-w | --week )
 	    shift
 	    week_number_arg="$1"
+	    ;;
+	-m | --month )
+	    shift
+	    month_number_arg="$1"
 	    ;;
 	-o | --out )
 	    shift
@@ -45,7 +49,13 @@ done
 #
 # check if any mandatory arg has been provided
 #
-if [[ -z "${week_number_arg}" ]]
+if [[ -n "${week_number_arg}" ]] && [[ -n "${month_number_arg}" ]]
+then
+    Usage "week and month specification are mutually exclusive"
+    exit 1
+fi
+
+if [[ -z "${week_number_arg}${month_number_arg}" ]]
 then
     Usage "missing args"
     exit 1
@@ -55,34 +65,72 @@ fi
 # check arg consistency
 #
 
-if expr "${week_number_arg}" + 0 1>/dev/null 2>/dev/null
+if [[ -n "${week_number_arg}" ]]
 then
-    :
-else
-    Usage "week number argument should be an integer"
-    #NOT REACHED
+    if expr "${week_number_arg}" + 0 1>/dev/null 2>/dev/null
+    then
+	:
+    else
+	Usage "week number argument should be an integer"
+	#NOT REACHED
+    fi
+
+    if [[ ${week_number_arg} -lt 0 ]]
+    then
+	# compute a relative week number
+	current_week_number=$( date '+%V' )
+	abs_week_number=$(( ${current_week_number} + ${week_number_arg} ))
+	if [[ ${abs_week_number} -lt 1 ]]
+	then
+	    Usage "relative week number ${week_number_arg} is too large"
+	    #NOT REACHED
+	else
+	    week_number=${abs_week_number}
+	fi
+    else
+	# its an absolute week number in [1..53]
+	if [[ ${week_number_arg} -le 53 ]]
+	then
+	    week_number=${week_number_arg}
+	else
+	    Usage "week number should be in range [1..53]"
+	    #NOT REACHED
+	fi
+    fi
 fi
 
-if [[ ${week_number_arg} -lt 0 ]]
+
+if [[ -n "${month_number_arg}" ]]
 then
-    # compute a relative week number
-    current_week_number=$( date '+%V' )
-    abs_week_number=$(( ${current_week_number} + ${week_number_arg} ))
-    if [[ ${abs_week_number} -lt 1 ]]
+    if expr "${month_number_arg}" + 0 1>/dev/null 2>/dev/null
     then
-	Usage "relative week number ${week_number_arg} is too large"
-	#NOT REACHED
+	:
     else
-	week_number=${abs_week_number}
+	Usage "month number argument should be an integer"
+	#NOT REACHED
     fi
-else
-    # its an absolute week number in [1..53]
-    if [[ ${week_number_arg} -le 53 ]]
+
+    if [[ ${month_number_arg} -lt 0 ]]
     then
-	week_number=${week_number_arg}
+	# compute a relative month number
+	current_month_number=$( date '+%m' )
+	abs_month_number=$(( ${current_month_number} + ${month_number_arg} ))
+	if [[ ${abs_month_number} -lt 1 ]]
+	then
+	    Usage "relative month number ${month_number_arg} is too large"
+	    #NOT REACHED
+	else
+	    printf -v month_number '%02d' "${abs_month_number}"
+	fi
     else
-	Usage "week number should be in range [1..53]"
-	#NOT REACHED
+	# its an absolute month number in [1..12]
+	if [[ ${month_number_arg} -le 12 ]]
+	then
+	    month_number=${month_number_arg}
+	else
+	    Usage "month number should be in range [1..53]"
+	    #NOT REACHED
+	fi
     fi
 fi
 
@@ -105,10 +153,22 @@ fi
 # Get all files of the week
 #
 
+#
 # example file name: stat_Y=2021=Y_M=03=M_D=24=D_d=3=d_W=12=W_156.txt
-all_stat_files=$(
-    ls -1 "${STAT_DATA_DIR}/"stat_Y=${STATS_FOR_YEAR}=Y*W=${week_number}=W*.txt 2>/dev/null
-	      )
+#
+if [[ -n "${week_number_arg}" ]]
+then
+    all_stat_files=$(
+	ls -1 "${STAT_DATA_DIR}/"stat_Y=${STATS_FOR_YEAR}=Y*_W=${week_number}=W_*.txt 2>/dev/null
+		  )
+fi
+
+if [[ -n "${month_number_arg}" ]]
+then
+    all_stat_files=$(
+	ls -1 "${STAT_DATA_DIR}/"stat_Y=${STATS_FOR_YEAR}=Y*_M=${month_number}=M_*.txt 2>/dev/null
+		  )
+fi
 
 if [[ -z $( echo "${all_stat_files}" | tr -d '[:blank:]' ) ]]
 then
