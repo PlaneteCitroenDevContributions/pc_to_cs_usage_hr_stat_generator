@@ -92,11 +92,6 @@ fi
 # Check the folder containing the stats
 # =====================================
 
-ls -ld "${STAT_DATA_DIR}"
-id
-ls -l /var
-mount
-
 if [[ -d "${STAT_DATA_DIR}" ]] # && [[ -r "${STAT_DATA_DIR}" ]]
 then
     :
