@@ -114,7 +114,7 @@ then
     then
 	# compute a relative month number
 	current_month_number=$( date '+%m' )
-	abs_month_number=$(( ${current_month_number} + ${month_number_arg} ))
+	abs_month_number=$( expr ${current_month_number} + ${month_number_arg} )
 	if [[ ${abs_month_number} -lt 1 ]]
 	then
 	    Usage "relative month number ${month_number_arg} is too large"
