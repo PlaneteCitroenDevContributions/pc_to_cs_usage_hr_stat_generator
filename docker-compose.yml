@@ -11,4 +11,4 @@ services:
         - "STAT_DATA_DIR=/var/pc_stats"
         - "TZ=Europe/Paris"
      volumes:
-        - "/home/bernhara/CONTAINERs/PCApacheReverseProxy_RUN/pc_to_cs_apache_reverse_proxy/pc_stats/:/var/pc_stats/:ro"
+        - ./../pc_to_cs_apache_reverse_proxy/pc_stats/:/var/pc_stats/:ro
