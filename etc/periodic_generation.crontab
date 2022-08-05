@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 # every monday, stats of previous week
-0 6 * * 1	 cd /home/bernhara/CONTAINERs/pc_to_cs_usage_hr_stat_generator && docker-compose run -u 33:33 -v VOL4NEXTCLOUD_EXTERNAL_STORAGE:/NEXTCLOUD_EXTERNAL_STORAGE/ --rm reverse-proxy-rh-stat-generator -w -1 -o /NEXTCLOUD_EXTERNAL_STORAGE/RProxy_Stats/LogsToStats/pcstats-$( date +%Y)-S-$(expr $( date +%V) - 1).xlsx
+0 6 * * 1	 cd /home/bernhara/CONTAINERs/pc_to_cs_usage_hr_stat_generator && docker compose run -v VOL4NEXTCLOUD_EXTERNAL_STORAGE:/NEXTCLOUD_EXTERNAL_STORAGE/ --rm reverse-proxy-rh-stat-generator -w -1 -o /NEXTCLOUD_EXTERNAL_STORAGE/RProxy_Stats/LogsToStats/pcstats-$( date +%Y)-S-$(expr $( date +%V) - 1).xlsx
 
 # every month, stats of previous month
-0 6 1 * *	 cd /home/bernhara/CONTAINERs/pc_to_cs_usage_hr_stat_generator && docker-compose run -u 33:33 -v VOL4NEXTCLOUD_EXTERNAL_STORAGE:/NEXTCLOUD_EXTERNAL_STORAGE/ --rm reverse-proxy-rh-stat-generator -m -1 -o /NEXTCLOUD_EXTERNAL_STORAGE/RProxy_Stats/LogsToStats/pcstats-$( date +%Y)-m-$(expr $( date +%m) - 1).xlsx
+0 6 1 * *	 cd /home/bernhara/CONTAINERs/pc_to_cs_usage_hr_stat_generator && docker compose run -u 33:33 -v VOL4NEXTCLOUD_EXTERNAL_STORAGE:/NEXTCLOUD_EXTERNAL_STORAGE/ --rm reverse-proxy-rh-stat-generator -m -1 -o /NEXTCLOUD_EXTERNAL_STORAGE/RProxy_Stats/LogsToStats/pcstats-$( date +%Y)-m-$(expr $( date +%m) - 1).xlsx
