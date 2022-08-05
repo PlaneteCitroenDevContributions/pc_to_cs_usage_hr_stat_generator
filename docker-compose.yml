@@ -4,11 +4,34 @@ version: '3.4'
 
 services:
 
-  reverse-proxy-rh-stat-generator:
+  pctocs-reverse-proxy-previous-week-stat-generator:
      build: .
-     image: reverse-proxy-rh-stat-generator:latest
+     image: reverse-proxy-stat-generator:latest
      environment:
         - "STAT_DATA_DIR=/var/pc_stats"
         - "TZ=Europe/Paris"
      volumes:
-        - ./../pc_to_cs_apache_reverse_proxy/pc_stats/:/var/pc_stats/:ro
+        - ./../PcToCsReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - STAT_VOLUME:/out_stat_dir/
+     command:
+#        - "/bin/bash -c '-w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $( date +%V) - 1).xlsx'"
+        - "/bin/bash -c 'set -x;/usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx'"
+
+  pctocs-reverse-proxy-previous-month-stat-generator:
+     build: .
+     image: reverse-proxy-stat-generator:latest
+     environment:
+        - "STAT_DATA_DIR=/var/pc_stats"
+        - "TZ=Europe/Paris"
+     volumes:
+        - ./../PcToCs-PLUS-ReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - STAT_VOLUME:/NEXTCLOUD_EXTERNAL_STORAGE/
+     command:
+#        - "/bin/bash -c '-w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $( date +%V) - 1).xlsx'"
+        - "/bin/bash -c 'set -x;/usr/local/bin/generateHrStatsForPeriod.sh -m -1 -o /NEXTCLOUD_EXTERNAL_STORAGE/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-m-$$(expr $$( date +%m) - 1).xlsx'"
+
+volumes:
+
+   STAT_VOLUME:
+      external: true
+      name: VOL4NEXTCLOUD_EXTERNAL_STORAGE"
