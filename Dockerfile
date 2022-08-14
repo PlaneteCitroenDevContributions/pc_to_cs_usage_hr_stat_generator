@@ -11,5 +11,5 @@ COPY bin/generateHrStatsForPeriod.sh /usr/local/bin
 # defaults to NextCloud user/group
 USER 33:33
 
-ENTRYPOINT [ "/bin/bash", "-x", "/usr/local/bin/generateHrStatsForPeriod.sh" ]
+#ENTRYPOINT [ "/bin/bash", "-x", "/usr/local/bin/generateHrStatsForPeriod.sh" ]
 #ENTRYPOINT [ "/usr/local/bin/bash", "/usr/local/bin/generateHrStatsForPeriod.sh" ]

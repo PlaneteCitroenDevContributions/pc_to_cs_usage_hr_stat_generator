@@ -13,9 +13,11 @@ services:
      volumes:
         - ./../PcToCsReverseProxy/pc_stats/:/var/pc_stats/:ro
         - STAT_VOLUME:/out_stat_dir/
-     command:
+     command: [/bin/bash, -x, -c, "/usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx"]
+#        - set -x
+#        - /usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx
 #        - "/bin/bash -c '-w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $( date +%V) - 1).xlsx'"
-        - "/bin/bash -c 'set -x;/usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx'"
+
 
   pctocs-reverse-proxy-previous-month-stat-generator:
      build: .
@@ -25,13 +27,11 @@ services:
         - "TZ=Europe/Paris"
      volumes:
         - ./../PcToCs-PLUS-ReverseProxy/pc_stats/:/var/pc_stats/:ro
-        - STAT_VOLUME:/NEXTCLOUD_EXTERNAL_STORAGE/
-     command:
-#        - "/bin/bash -c '-w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $( date +%V) - 1).xlsx'"
-        - "/bin/bash -c 'set -x;/usr/local/bin/generateHrStatsForPeriod.sh -m -1 -o /NEXTCLOUD_EXTERNAL_STORAGE/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-m-$$(expr $$( date +%m) - 1).xlsx'"
+        - STAT_VOLUME:/out_stat_dir/
+     command: [/bin/bash, -x, -c, "/usr/local/bin/generateHrStatsForPeriod.sh -m -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-M-$$(expr $$( date +%m) - 1).xlsx"]
 
 volumes:
 
    STAT_VOLUME:
       external: true
-      name: VOL4NEXTCLOUD_EXTERNAL_STORAGE"
+      name: "VOL4NEXTCLOUD_EXTERNAL_STORAGE"
