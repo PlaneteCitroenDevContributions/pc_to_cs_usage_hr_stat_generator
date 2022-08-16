@@ -14,10 +14,6 @@ services:
         - ./../PcToCsReverseProxy/pc_stats/:/var/pc_stats/:ro
         - STAT_VOLUME:/out_stat_dir/
      command: [/bin/bash, -x, -c, "/usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx"]
-#        - set -x
-#        - /usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx
-#        - "/bin/bash -c '-w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $( date +%V) - 1).xlsx'"
-
 
   cs2pc-basic-previous-month-stat-generator:
      build: .
