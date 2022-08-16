@@ -4,7 +4,7 @@ version: '3.4'
 
 services:
 
-  pctocs-reverse-proxy-previous-week-stat-generator:
+  cs2pc-basic-previous-week-stat-generator:
      build: .
      image: reverse-proxy-stat-generator:latest
      environment:
@@ -19,7 +19,7 @@ services:
 #        - "/bin/bash -c '-w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $( date +%V) - 1).xlsx'"
 
 
-  pctocs-reverse-proxy-previous-month-stat-generator:
+  cs2pc-basic-previous-month-stat-generator:
      build: .
      image: reverse-proxy-stat-generator:latest
      environment:
