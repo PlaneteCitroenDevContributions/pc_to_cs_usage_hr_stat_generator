@@ -17,9 +17,24 @@ services:
         - /bin/bash
         - -x
         - -c
-        - "/usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx"
+        - "/usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-basic-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx"
 
   cs2pc-basic-previous-month-stat-generator:
+     build: .
+     image: reverse-proxy-stat-generator:latest
+     environment:
+        - "STAT_DATA_DIR=/var/pc_stats"
+        - "TZ=Europe/Paris"
+     volumes:
+        - ./../PcToCsReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - STAT_VOLUME:/out_stat_dir/
+     command:
+        - /bin/bash
+        - -x
+        - -c
+        - "/usr/local/bin/generateHrStatsForPeriod.sh -m -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-basic-$$( date +%Y)-M-$$(expr $$( date +%m) - 1).xlsx"
+
+  cs2pc-plus-previous-week-stat-generator:
      build: .
      image: reverse-proxy-stat-generator:latest
      environment:
@@ -32,8 +47,22 @@ services:
         - /bin/bash
         - -x
         - -c
-        - "/usr/local/bin/generateHrStatsForPeriod.sh -m -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-$$( date +%Y)-M-$$(expr $$( date +%m) - 1).xlsx"
-     
+        - "/usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-plus-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx"
+
+  cs2pc-plus-previous-month-stat-generator:
+     build: .
+     image: reverse-proxy-stat-generator:latest
+     environment:
+        - "STAT_DATA_DIR=/var/pc_stats"
+        - "TZ=Europe/Paris"
+     volumes:
+        - ./../PcToCs-PLUS-ReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - STAT_VOLUME:/out_stat_dir/
+     command:
+        - /bin/bash
+        - -x
+        - -c
+        - "/usr/local/bin/generateHrStatsForPeriod.sh -m -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-plus-$$( date +%Y)-M-$$(expr $$( date +%m) - 1).xlsx"
 
 volumes:
 
