@@ -5,7 +5,10 @@ PGM_BASENAME=$( basename "$0" )
 
 : ${STAT_DATA_DIR:="/var/pc_stats"}
 
-: ${STATE_DIR:="/var/states"}
+: ${RUN_STATES_DIR:="/var/run_states"}
+
+: ${GELF_UDP_HOST=''}
+: ${GELF_UDP_PORT=''}
 
 #
 # check arg = week number
@@ -15,9 +18,8 @@ Usage ()
 {
     msg="$@"
     (
-	echo "ERROR: XXXXXXXXXXXXXXXXXXXXXXXXXXXX ${msg}"
-	echo "Usage ${PGM_BASENAME} (-w|--week <week number>)|(-m|--mounth <month number>) [-o|--out <output csv name>]"
-	echo "	If week number is a negative integer, specifies a relative week number to current week number"
+	echo "ERROR:  ${msg}"
+	echo "Usage ${PGM_BASENAME} --env.GELF_UDP_HOST <hostname of GELF udp server> --env.GELF_UDP_PORT <UDP port number of GELF server>" 
     ) 1>&2
     exit 1
 }
@@ -26,13 +28,13 @@ Usage ()
 while [[ -n "$1" ]]
 do
      case "$1" in
-	-h | --gelf_host )
+	--env.GELF_UDP_HOST )
 	    shift
-	    gelf_host="$1"
+	    GELF_UDP_HOST="$1"
 	    ;;
-	-p | --gelf_port )
+	--env.GELF_UDP_PORT )
 	    shift
-	    gelf_port="$1"
+	    GELF_UDP_PORT="$1"
 	    ;;
 	* )
 	    Usage "bad arg: $1"
@@ -48,90 +50,18 @@ exit 1
 #
 # check if any mandatory arg has been provided
 #
-if [[ -n "${week_number_arg}" ]] && [[ -n "${month_number_arg}" ]]
+if [[ -n "${GELF_UDP_HOST}" ]]
 then
-    Usage "week and month specification are mutually exclusive"
+    Usage "GELF_UDP_HOST not specified"
     exit 1
 fi
 
-if [[ -z "${week_number_arg}${month_number_arg}" ]]
+if [[ -n "${GELF_UDP_PORT}" ]]
 then
-    Usage "missing args"
+    Usage "GELF_UDP_PORT not specified"
     exit 1
 fi
 
-#
-# check arg consistency
-#
-
-if [[ -n "${week_number_arg}" ]]
-then
-    if expr "${week_number_arg}" + 0 1>/dev/null 2>/dev/null
-    then
-	:
-    else
-	Usage "week number argument should be an integer"
-	#NOT REACHED
-    fi
-
-    if [[ ${week_number_arg} -lt 0 ]]
-    then
-	# compute a relative week number
-	current_week_number=$( date '+%V' )
-	abs_week_number=$(( ${current_week_number} + ${week_number_arg} ))
-	if [[ ${abs_week_number} -lt 1 ]]
-	then
-	    Usage "relative week number ${week_number_arg} is too large"
-	    #NOT REACHED
-	else
-	    week_number=${abs_week_number}
-	fi
-    else
-	# its an absolute week number in [1..53]
-	if [[ ${week_number_arg} -le 53 ]]
-	then
-	    week_number=${week_number_arg}
-	else
-	    Usage "week number should be in range [1..53]"
-	    #NOT REACHED
-	fi
-    fi
-fi
-
-
-if [[ -n "${month_number_arg}" ]]
-then
-    if expr "${month_number_arg}" + 0 1>/dev/null 2>/dev/null
-    then
-	:
-    else
-	Usage "month number argument should be an integer"
-	#NOT REACHED
-    fi
-
-    if [[ ${month_number_arg} -lt 0 ]]
-    then
-	# compute a relative month number
-	current_month_number=$( date '+%m' )
-	abs_month_number=$( expr ${current_month_number} + ${month_number_arg} )
-	if [[ ${abs_month_number} -lt 1 ]]
-	then
-	    Usage "relative month number ${month_number_arg} is too large"
-	    #NOT REACHED
-	else
-	    printf -v month_number '%02d' "${abs_month_number}"
-	fi
-    else
-	# its an absolute month number in [1..12]
-	if [[ ${month_number_arg} -le 12 ]]
-	then
-	    month_number=${month_number_arg}
-	else
-	    Usage "month number should be in range [1..53]"
-	    #NOT REACHED
-	fi
-    fi
-fi
 
 : ${STATS_FOR_YEAR:=$( date '+%Y' )}
 
