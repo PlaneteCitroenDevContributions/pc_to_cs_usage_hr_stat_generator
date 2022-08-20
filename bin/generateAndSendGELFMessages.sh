@@ -9,6 +9,7 @@ PGM_BASENAME=$( basename "$0" )
 
 : ${GELF_UDP_HOST=''}
 : ${GELF_UDP_PORT=''}
+: ${SERVICE_NAME='_dev_'}
 
 #
 # check arg = week number
@@ -24,6 +25,9 @@ Usage ()
     exit 1
 }
 
+#
+# args
+#
 
 while [[ -n "$1" ]]
 do
@@ -36,6 +40,10 @@ do
 	    shift
 	    GELF_UDP_PORT="$1"
 	    ;;
+	--env.SERVICE_NAME )
+	    shift
+	    SERVICE_NAME="$1"
+	    ;;
 	* )
 	    Usage "bad arg: $1"
 	    exit 1
@@ -43,9 +51,6 @@ do
      esac
      shift
 done
-
-echo "NOT YET IMPLEMENTED" 1>&2
-exit 1
 
 #
 # check if any mandatory arg has been provided
@@ -63,7 +68,6 @@ then
 fi
 
 
-: ${STATS_FOR_YEAR:=$( date '+%Y' )}
 
 #
 # Check the folder containing the stats
@@ -79,25 +83,17 @@ else
 fi
 
 #
-# Get all files of the week
+# Get all files not teated since last call
 #
 
-#
-# example file name: stat_Y=2021=Y_M=03=M_D=24=D_d=3=d_W=12=W_156.txt
-#
-if [[ -n "${week_number_arg}" ]]
+if [[ -r "${RUN_STATES_DIR}/last_call_stat_file" ]]
 then
     all_stat_files=$(
-	ls -1 "${STAT_DATA_DIR}/"stat_Y=${STATS_FOR_YEAR}=Y*_W=${week_number}=W_*.txt 2>/dev/null
+	find "${STAT_DATA_DIR}" -newer "${RUN_STATES_DIR}/last_call_stat_file" -print
 		  )
-fi
-
-if [[ -n "${month_number_arg}" ]]
-then
-    all_stat_files=$(
-	ls -1 "${STAT_DATA_DIR}/"stat_Y=${STATS_FOR_YEAR}=Y*_M=${month_number}=M_*.txt 2>/dev/null
-		  )
-fi
+else
+    all_stat_files=''
+fi    
 
 if [[ -z $( echo "${all_stat_files}" | tr -d '[:blank:]' ) ]]
 then
@@ -108,7 +104,7 @@ then
 fi
     
 
-generateCSVStatLine ()
+generateAndSendGELFLog ()
 {
     # sample line:
     # "1616779865" "bernhara" "login" "success" "90.8.128.173" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
@@ -166,33 +162,14 @@ generateCSVStatLine ()
 
 }
 
-#
-# generate CSV file
-#
-
-rm -f /tmp/stats.csv
-(
-    echo "\"Date\"${CSV_SEPARATOR}\"Action\"${CSV_SEPARATOR}\"Status\"${CSV_SEPARATOR}\"login PC\"${CSV_SEPARATOR}\"Reference Document\"${CSV_SEPARATOR}\"VIN\"${CSV_SEPARATOR}\"Adresse IP\"${CSV_SEPARATOR}\"Navigateur\""
-
+echo "${all_stat_files}" | \
     sort \
 	-n \
 	-k 1 \
-	-o /tmp/stats_sorted.txt \
-	${all_stat_files}
+	-o /tmp/sorted_stat_file_list.txt
 
-    cat /tmp/stats_sorted.txt | \
-	while read -r line
-	do
-	    generateCSVStatLine "${line}"
-	done
-) > /tmp/stats.csv
-
-ssconvert --verbose '--import-type=Gnumeric_stf:stf_csvtab' '--export-type=Gnumeric_Excel:xlsx2' /tmp/stats.csv /tmp/stats.xlsx
-
-# if outfile arg is provided, redirect output
-if [[ -n "${outfile_arg}" ]]
-then
-    cp /tmp/stats.xlsx "${outfile_arg}"
-else
-    cat /tmp/stats.xlsx
-fi
+cat /tmp/stats_sorted.txt | \
+    while read -r line
+    do
+	generateAndSendGELFLog "${line}"
+    done
