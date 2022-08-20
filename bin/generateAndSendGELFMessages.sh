@@ -160,29 +160,47 @@ generateAndSendGELFLog ()
     csv_date=$( date --date "@${epoch_time}" '+%d/%m/%Y %T' )
     echo "\"${csv_date}\"${CSV_SEPARATOR}\"${action}\"${CSV_SEPARATOR}\"${status}\"${CSV_SEPARATOR}\"${pc_login}\"${CSV_SEPARATOR}\"${doc_ref}\"${CSV_SEPARATOR}\"${vin}\"${CSV_SEPARATOR}\"${real_ip}\"${CSV_SEPARATOR}\"${user_agent}\""
 
-    log_line='{
-  "version": "1.1",
+    gelf_headers='"version": "1.1",
   "host": "'$( hostname )',
   "short_message": "test from command line at '$(date)'",
   "full_message": "... none ...",
   "level": 3,
 '
     # generated timestamp
-    log_line=${log_line}'  "timestamp": '${epoch_time}','
+    gelf_headers=${gelf_headers}'  "timestamp": '${epoch_time}
 
     # generate each specific field
-log_line=${log_line}'
-  "_pc_service": "'${}'",
-  "_action": "'${action}'",
-  "_status": "'${status}'",
-  "_pc_login": "'${pc_login}'",
-  "_real_ip": "'${real_ip}'",
-  "_user_agent": "'${user_agent}'"
-}'
+    gelf_body=$(
+	echo -n ', "_pc_service": "'${SERVICE_NAME}'"'
 
-echo -n "${log_line}" | nc -w0 -u localhost 12201
+	echo -n ', "_action": "'${action}'"'
+    
+	if [[ -n "${status}" ]]
+	then
+	    echo -n ', "_status": "'${status}'"'
+	fi
 
+	if [[ -n "${pc_login}" ]]
+	then
+	    echo -n ', "_pc_login": "'${pc_login}'"'
+	fi
 
+	if [[ -n "${real_ip}" ]]
+	then
+	    echo -n ', "_real_ip": "'${real_ip}'"'
+	fi
+
+	if [[ -n "${user_agent}" ]]
+	then
+	    echo -n ', "_user_agent": "'${user_agent}'"'
+	fi
+	     )
+
+    gelf_line='{ '${gelf_headers},${gelf_body}' }'
+
+    echo '>>>'${gelf_line}'<<<<'
+
+    ##!!echo -n "${log_line}" | nc -w0 -u localhost 12201
 }
 
 
