@@ -86,10 +86,10 @@ fi
 # Get all files not teated since last call
 #
 
-if [[ -r "${RUN_STATES_DIR}/last_call_stat_file" ]]
+if [[ -r "${RUN_STATES_DIR}/last_call.status" ]]
 then
     all_stat_files=$(
-	find "${STAT_DATA_DIR}" -newer "${RUN_STATES_DIR}/last_call_stat_file" -print
+	find "${STAT_DATA_DIR}" -newer "${RUN_STATES_DIR}/last_call.status" -print
 		  )
 else
     all_stat_files=''
@@ -216,3 +216,5 @@ cat /tmp/stats_sorted.txt | \
     do
 	generateAndSendGELFLog "${line}"
     done
+
+touch "${RUN_STATES_DIR}/last_call.status"
