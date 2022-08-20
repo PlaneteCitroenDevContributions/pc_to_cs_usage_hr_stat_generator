@@ -160,7 +160,32 @@ generateAndSendGELFLog ()
     csv_date=$( date --date "@${epoch_time}" '+%d/%m/%Y %T' )
     echo "\"${csv_date}\"${CSV_SEPARATOR}\"${action}\"${CSV_SEPARATOR}\"${status}\"${CSV_SEPARATOR}\"${pc_login}\"${CSV_SEPARATOR}\"${doc_ref}\"${CSV_SEPARATOR}\"${vin}\"${CSV_SEPARATOR}\"${real_ip}\"${CSV_SEPARATOR}\"${user_agent}\""
 
+    log_line='{
+  "version": "1.1",
+  "host": "'$( hostname )',
+  "short_message": "test from command line at '$(date)'",
+  "full_message": "... none ...",
+  "level": 3,
+'
+    # generated timestamp
+    log_line=${log_line}'  "timestamp": '${epoch_time}','
+
+    # generate each specific field
+log_line=${log_line}'
+  "_pc_service": "'${}'",
+  "_action": "'${action}'",
+  "_status": "'${status}'",
+  "_pc_login": "'${pc_login}'",
+  "_real_ip": "'${real_ip}'",
+  "_user_agent": "'${user_agent}'"
+}'
+
+echo -n "${log_line}" | nc -w0 -u localhost 12201
+
+
 }
+
+
 
 echo "${all_stat_files}" | \
     sort \
