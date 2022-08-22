@@ -64,6 +64,39 @@ services:
         - -c
         - "/usr/local/bin/generateHrStatsForPeriod.sh -m -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-plus-$$( date +%Y)-M-$$(expr $$( date +%m) - 1).xlsx"
 
+  cs2pc-plus-previous-week-stat-generator:
+     build: .
+     image: reverse-proxy-stat-generator:latest
+     environment:
+        - "STAT_DATA_DIR=/var/pc_stats"
+        - "TZ=Europe/Paris"
+     volumes:
+        - ./../PcToCs-PLUS-ReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - STAT_VOLUME:/out_stat_dir/
+     command:
+        - /bin/bash
+        - -x
+        - -c
+        - "/usr/local/bin/generateHrStatsForPeriod.sh -w -1 -o /out_stat_dir/RProxy_Stats/LogsToStats/pcstats-plus-$$( date +%Y)-S-$$(expr $$( date +%V) - 1).xlsx"
+
+  cs2pc-basic-stats-to-graylog:
+     build: .
+     image: reverse-proxy-stat-generator:latest
+     environment:
+        - "STAT_DATA_DIR=/var/pc_stats"
+        - "TZ=Europe/Paris"
+        - GELF_UDP_HOST=vps-d4f07a20.vps.ovh.net
+        - GELF_UDP_PORT=12201
+        - SERVICE_NAME=cs2pc-basic
+     volumes:
+        - ./../PcToCs-ReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - ./run_states_basic/:/var/run_states/
+     command:
+        - /bin/bash
+        - -x
+        - -c
+        - "/usr/local/bin/generateAndSendGELFMessages.sh"
+
 volumes:
 
    STAT_VOLUME:
