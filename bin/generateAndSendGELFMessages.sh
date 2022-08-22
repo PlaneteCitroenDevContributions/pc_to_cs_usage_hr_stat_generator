@@ -175,7 +175,7 @@ generateAndSendGELFLog ()
 
 	"vin" )
 	    vin="${param}"
-	    pc_login=$( guess_attribute_for_ip ${real_ip} "pc_login" )
+	    pc_login=$( guess_from_cache_attribute_for_ip ${real_ip} "pc_login" )
 	    ;;
 
 	*)
@@ -185,8 +185,8 @@ generateAndSendGELFLog ()
     esac
       
 
-    csv_date=$( date --date "@${epoch_time}" '+%d/%m/%Y %T' )
-    echo "\"${csv_date}\"${CSV_SEPARATOR}\"${action}\"${CSV_SEPARATOR}\"${status}\"${CSV_SEPARATOR}\"${pc_login}\"${CSV_SEPARATOR}\"${doc_ref}\"${CSV_SEPARATOR}\"${vin}\"${CSV_SEPARATOR}\"${real_ip}\"${CSV_SEPARATOR}\"${user_agent}\""
+#!    csv_date=$( date --date "@${epoch_time}" '+%d/%m/%Y %T' )
+#!    echo "\"${csv_date}\"${CSV_SEPARATOR}\"${action}\"${CSV_SEPARATOR}\"${status}\"${CSV_SEPARATOR}\"${pc_login}\"${CSV_SEPARATOR}\"${doc_ref}\"${CSV_SEPARATOR}\"${vin}\"${CSV_SEPARATOR}\"${real_ip}\"${CSV_SEPARATOR}\"${user_agent}\""
 
     gelf_headers='"version": "1.1",
   "host": "'$( hostname )',
@@ -221,6 +221,16 @@ generateAndSendGELFLog ()
 	if [[ -n "${user_agent}" ]]
 	then
 	    echo -n ', "_user_agent": "'${user_agent}'"'
+	fi
+
+	if [[ -n "${vin}" ]]
+	then
+	    echo -n ', "_vin": "'${vin}'"'
+	fi
+	
+	if [[ -n "${doc_ref}" ]]
+	then
+	    echo -n ', "_doc_ref": "'${doc_ref}'"'
 	fi
 	     )
 
