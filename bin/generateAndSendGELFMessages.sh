@@ -232,7 +232,7 @@ generateAndSendGELFLog ()
     gelf_line='{ '${gelf_headers},${gelf_body}' }'
 
     # FIXME: not yet implemented
-    echo '>>>'${gelf_line}'<<<<'
+    echo '>>>'${gelf_line}'<<<<' 1>&2
 
     echo -n "${gelf_line}" | nc -w0 -u "${GELF_UDP_HOST}" "${GELF_UDP_PORT}"
     # TODO: handle connection errors
