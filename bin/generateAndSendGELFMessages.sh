@@ -104,6 +104,31 @@ then
 fi
     
 
+remember_to_cache_attribute_for_ip ()
+{
+    real_ip="$1"
+    attribute_name_to_cache="$2"
+    attribute_value_to_cache="$3"
+
+    echo "${attribute_value_to_cache}" > "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache:}"
+}
+
+guess_from_cache_attribute_for_ip ()
+{
+    real_ip="$1"
+    attribute_name_to_cache="$2"
+
+    if [[ -r "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache:}" ]]
+    then
+	attribute_value_from_cache=$( cat "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache:}" )
+    else
+	attribute_name_to_cache=''
+    fi
+
+    echo "${attribute_value_from_cache}"
+}
+
+
 generateAndSendGELFLog ()
 {
     # sample line:
@@ -140,14 +165,17 @@ generateAndSendGELFLog ()
 
 	"login" )
 	    pc_login="${param}"
+	    remember_to_cache_attribute_for_ip ${real_ip} "pc_login" "${pc_login}" 
 	    ;;
 
 	"documentation" )
 	    doc_ref="${param}"
+	    pc_login=$( guess_from_cache_attribute_for_ip ${real_ip} "pc_login" )
 	    ;;
 
 	"vin" )
 	    vin="${param}"
+	    pc_login=$( guess_attribute_for_ip ${real_ip} "pc_login" )
 	    ;;
 
 	*)
