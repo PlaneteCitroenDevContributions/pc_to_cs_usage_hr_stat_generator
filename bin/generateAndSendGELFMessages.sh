@@ -55,13 +55,13 @@ done
 #
 # check if any mandatory arg has been provided
 #
-if [[ -n "${GELF_UDP_HOST}" ]]
+if [[ -z "${GELF_UDP_HOST}" ]]
 then
     Usage "GELF_UDP_HOST not specified"
     exit 1
 fi
 
-if [[ -n "${GELF_UDP_PORT}" ]]
+if [[ -z "${GELF_UDP_PORT}" ]]
 then
     Usage "GELF_UDP_PORT not specified"
     exit 1
@@ -89,7 +89,7 @@ fi
 if [[ -r "${RUN_STATES_DIR}/last_call.status" ]]
 then
     all_stat_files=$(
-	find "${STAT_DATA_DIR}" -newer "${RUN_STATES_DIR}/last_call.status" -print
+	find "${STAT_DATA_DIR}" -newer "${RUN_STATES_DIR}/last_call.status" -type f -print
 		  )
 else
     all_stat_files=''
@@ -110,7 +110,7 @@ remember_to_cache_attribute_for_ip ()
     attribute_name_to_cache="$2"
     attribute_value_to_cache="$3"
 
-    echo "${attribute_value_to_cache}" > "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache:}"
+    echo "${attribute_value_to_cache}" > "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache}"
 }
 
 guess_from_cache_attribute_for_ip ()
@@ -118,9 +118,9 @@ guess_from_cache_attribute_for_ip ()
     real_ip="$1"
     attribute_name_to_cache="$2"
 
-    if [[ -r "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache:}" ]]
+    if [[ -r "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache}" ]]
     then
-	attribute_value_from_cache=$( cat "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache:}" )
+	attribute_value_from_cache=$( cat "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache}" )
     else
 	attribute_name_to_cache=''
     fi
@@ -189,7 +189,7 @@ generateAndSendGELFLog ()
 #!    echo "\"${csv_date}\"${CSV_SEPARATOR}\"${action}\"${CSV_SEPARATOR}\"${status}\"${CSV_SEPARATOR}\"${pc_login}\"${CSV_SEPARATOR}\"${doc_ref}\"${CSV_SEPARATOR}\"${vin}\"${CSV_SEPARATOR}\"${real_ip}\"${CSV_SEPARATOR}\"${user_agent}\""
 
     gelf_headers='"version": "1.1",
-  "host": "'$( hostname )',
+  "host": "'${HOSTNAME}'",
   "short_message": "test from command line at '$(date)'",
   "full_message": "... none ...",
   "level": 3,
