@@ -205,13 +205,14 @@ generateAndSendGELFLog ()
 
 
 
-echo "${all_stat_files}" | \
-    sort \
-	-n \
-	-k 1 \
-	-o /tmp/sorted_stat_file_list.txt
+sort \
+    -n \
+    -k 1 \
+    -o /tmp/time_ordered_stats.txt \
+${all_stat_files}
 
-cat /tmp/stats_sorted.txt | \
+
+cat /tmp/time_ordered_stats.txt | \
     while read -r line
     do
 	generateAndSendGELFLog "${line}"
