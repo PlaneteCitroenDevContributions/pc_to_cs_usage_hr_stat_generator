@@ -231,13 +231,16 @@ generateAndSendGELFLog ()
 
     gelf_line='{ '${gelf_headers},${gelf_body}' }'
 
+    # FIXME: not yet implemented
     echo '>>>'${gelf_line}'<<<<'
 
-    ##!!echo -n "${log_line}" | nc -w0 -u localhost 12201
+    echo -n "${gelf_line}" | nc -w0 -u "${GELF_UDP_HOST}" "${GELF_UDP_PORT}"
+    # TODO: handle connection errors
 }
 
-
-
+#
+# reorder all records in timestamp order
+#
 sort \
     -n \
     -k 1 \
