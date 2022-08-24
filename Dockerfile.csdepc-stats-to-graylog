@@ -1,0 +1,14 @@
+FROM almalinux
+
+ENV STAT_DATA_DIR=/var/pc_stats
+ENV TZ=Europe/Paris
+
+RUN dnf install -y emacs-nox nc \
+    && dnf clean all
+
+COPY bin/generateAndSendGELFMessages.sh /usr/local/bin
+
+# defaults to NextCloud user/group
+USER 33:33
+
+#ENTRYPOINT [ "/usr/local/bin/generateHrStatsForPeriod.sh" ]
