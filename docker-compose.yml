@@ -90,13 +90,13 @@ services:
         - GELF_UDP_HOST=vps-d4f07a20.vps.ovh.net
         - GELF_UDP_PORT=12201
         - SERVICE_NAME=cs2pc-basic
+        - NO_TOUCH=0
      volumes:
         - ./../PcToCs-ReverseProxy/pc_stats/:/var/pc_stats/:ro
         - ./run_states_basic/:/var/run_states/
      command:
         - /bin/bash
         - -x
-        - -c
         - "/usr/local/bin/generateAndSendGELFMessages.sh"
 
 volumes:
