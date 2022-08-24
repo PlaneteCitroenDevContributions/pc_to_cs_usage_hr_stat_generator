@@ -260,20 +260,21 @@ ${all_stat_files}
 
 
 last_log_generation_timestamp=''
-cat /tmp/time_ordered_stats.txt | \
-    while read -r line
-    do
-	treated_time_stamp=$( generateAndSendGELFLog "${line}" )
-	generation_status=$?
-	if [[ ${generation_status} -eq 0 ]]
-	then
-	    last_log_generation_timestamp=${treated_time_stamp}
-	else
-	    last_treated_time_stamp=''
-	    break
-	    # NOT REACHED
-	fi
-    done
+while read -r line
+do
+    treated_time_stamp=$( generateAndSendGELFLog "${line}" )
+    generation_status=$?
+    if [[ ${generation_status} -eq 0 ]]
+    then
+	last_log_generation_timestamp=${treated_time_stamp}
+    else
+	last_treated_time_stamp=''
+	break
+	# NOT REACHED
+    fi
+done < /tmp/time_ordered_stats.txt
+
+echo 'ZZZZZ'
 
 if [[ -n "${last_log_generation_timestamp}" && "${NO_TOUCH}" != '1' ]]
 then
