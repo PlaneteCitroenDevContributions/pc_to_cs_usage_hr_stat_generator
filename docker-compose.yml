@@ -92,7 +92,7 @@ services:
         - SERVICE_NAME=cs2pc-basic
         - NO_TOUCH=0
      volumes:
-        - ./../PcToCs-ReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - ./../PcToCsReverseProxy/pc_stats/:/var/pc_stats/:ro
         - ./run_states_basic/:/var/run_states/
      command:
         - /bin/bash
