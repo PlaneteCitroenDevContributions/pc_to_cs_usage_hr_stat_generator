@@ -23,3 +23,5 @@ venv.bak/
 #
 
 /tmp/
+
+/run_states_*/
