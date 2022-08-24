@@ -11,6 +11,8 @@ PGM_BASENAME=$( basename "$0" )
 : ${GELF_UDP_PORT=''}
 : ${SERVICE_NAME='_dev_'}
 
+: {NO_TOUCH:='0'}
+
 #
 # check arg = week number
 #
@@ -235,7 +237,16 @@ generateAndSendGELFLog ()
     echo '>>>'${gelf_line}'<<<<' 1>&2
 
     echo -n "${gelf_line}" | nc -w0 -u "${GELF_UDP_HOST}" "${GELF_UDP_PORT}"
-    # TODO: handle connection errors
+    nc_status=$?
+
+    if [[ ${nc_status} -eq 0 ]]
+    then
+       echo "${timestamp}"
+       return 0
+    else
+	echo ''
+	return 1
+    fi
 }
 
 #
@@ -248,10 +259,20 @@ sort \
 ${all_stat_files}
 
 
+last_treated_time_stamp=''
 cat /tmp/time_ordered_stats.txt | \
     while read -r line
     do
-	generateAndSendGELFLog "${line}"
+	last_treated_time_stamp=$( generateAndSendGELFLog "${line}" )
+	generation_status=$?
+	if [[ ${generation_status} -ne 0 ]]
+	      last_treated_time_stamp=''
+	      break
+	      # NOT REACHED
+	fi
     done
 
-touch "${RUN_STATES_DIR}/last_call.status"
+if [[ -n "${last_treated_time_stamp}" && "${NO_TOUCH}" != '1' ]]
+then
+    touch --date="@${last_treated_time_stamp}" "${RUN_STATES_DIR}/last_call.status"
+fi
