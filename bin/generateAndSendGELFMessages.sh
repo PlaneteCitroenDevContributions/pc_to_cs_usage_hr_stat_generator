@@ -241,7 +241,7 @@ generateAndSendGELFLog ()
 
     if [[ ${nc_status} -eq 0 ]]
     then
-       echo "${timestamp}"
+       echo "${epoch_time}"
        return 0
     else
 	echo ''
