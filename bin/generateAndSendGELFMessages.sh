@@ -259,20 +259,23 @@ sort \
 ${all_stat_files}
 
 
-last_treated_time_stamp=''
+last_log_generation_timestamp=''
 cat /tmp/time_ordered_stats.txt | \
     while read -r line
     do
-	last_treated_time_stamp=$( generateAndSendGELFLog "${line}" )
+	treated_time_stamp=$( generateAndSendGELFLog "${line}" )
 	generation_status=$?
-	if [[ ${generation_status} -ne 0 ]]
-	      last_treated_time_stamp=''
-	      break
-	      # NOT REACHED
+	if [[ ${generation_status} -eq 0 ]]
+	then
+	    last_log_generation_timestamp=${treated_time_stamp}
+	else
+	    last_treated_time_stamp=''
+	    break
+	    # NOT REACHED
 	fi
     done
 
-if [[ -n "${last_treated_time_stamp}" && "${NO_TOUCH}" != '1' ]]
+if [[ -n "${last_log_generation_timestamp}" && "${NO_TOUCH}" != '1' ]]
 then
-    touch --date="@${last_treated_time_stamp}" "${RUN_STATES_DIR}/last_call.status"
+    touch --date="@${last_log_generation_timestamp}" "${RUN_STATES_DIR}/last_call.status"
 fi
