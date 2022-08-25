@@ -99,6 +99,26 @@ services:
         - -x
         - "/usr/local/bin/generateAndSendGELFMessages.sh"
 
+  csdepc-plus-stats-to-graylog:
+     build:
+        context: .
+        dockerfile: Dockerfile.csdepc-stats-to-graylog
+     image: rcsdepc-stats-to-graylog:latest
+     environment:
+        - "STAT_DATA_DIR=/var/pc_stats"
+        - "TZ=Europe/Paris"
+        - GELF_UDP_HOST=vps-d4f07a20.vps.ovh.net
+        - GELF_UDP_PORT=12201
+        - SERVICE_NAME=cs2pc-plus
+        - NO_TOUCH=0
+     volumes:
+        - ./../PcToCs-PLUS-ReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - ./run_states_plus/:/var/run_states/
+     command:
+        - /bin/bash
+        - -x
+        - "/usr/local/bin/generateAndSendGELFMessages.sh"
+
 volumes:
 
    STAT_VOLUME:
