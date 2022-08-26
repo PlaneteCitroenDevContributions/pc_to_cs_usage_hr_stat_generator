@@ -109,7 +109,7 @@ fi
 urldecode ()
 {
     url_encoded_string="$1"
-    url_decoded_string=${url_decoded_string//%/\\x}
+    url_decoded_string=${url_encoded_string//%/\\x}
 
     echo "${url_decoded_string}"
 }
