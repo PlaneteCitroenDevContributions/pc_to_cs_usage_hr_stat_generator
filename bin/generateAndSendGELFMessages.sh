@@ -106,6 +106,15 @@ then
 fi
     
 
+urldecode ()
+{
+    url_encoded_string="$1"
+    url_decoded_string=${url_decoded_string//%/\\x}
+
+    echo "${url_decoded_string}"
+}
+
+
 remember_to_cache_attribute_for_ip ()
 {
     real_ip="$1"
@@ -207,7 +216,8 @@ generateAndSendGELFLog ()
 
 	if [[ -n "${pc_login}" ]]
 	then
-	    echo -n ', "_pc_login": "'${pc_login}'"'
+	    url_decoded_pc_login=$( urldecode "${pc_login}" )
+	    echo -n ', "_pc_login": "'${url_decoded_pc_login}'"'
 	fi
 
 	if [[ -n "${real_ip}" ]]
