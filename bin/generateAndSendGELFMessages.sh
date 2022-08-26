@@ -276,5 +276,6 @@ done < /tmp/time_ordered_stats.txt
 
 if [[ -n "${last_log_generation_timestamp}" && "${NO_TOUCH}" != '1' ]]
 then
-    touch --date="@${last_log_generation_timestamp}" "${RUN_STATES_DIR}/last_call.status"
+    last_call_file_timestamp=$(( ${last_log_generation_timestamp} + 1 ))
+    touch --date="@${last_call_file_timestamp}" "${RUN_STATES_DIR}/last_call.status"
 fi
