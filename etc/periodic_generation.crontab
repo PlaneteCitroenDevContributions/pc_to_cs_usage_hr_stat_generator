@@ -4,10 +4,13 @@ STAT_CONTAINER_DIR=/home/bernhara/PC_CONTAINERs/pc_to_cs_usage_hr_stat_generator
 # CS BASIC
 #
 # every monday, stats of previous week
-0 6 * * 1	 cd ${STAT_CONTAINER_DIR} && docker compose up cs2pc-basic-previous-week-stat-generator
+#!!0 6 * * 1	 service=cs2pc-basic-previous-week-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up \${service} 1>/tmp/\${service}.stdout 2>/tmp/\${service}.stderr
+
+*/2 * * * *	 service=cs2pc-basic-previous-week-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up ${service} 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
 
 # every month, stats of previous month
-0 6 1 * *	 cd ${STAT_CONTAINER_DIR} && docker compose up cs2pc-basic-previous-month-stat-generator
+0 6 1 * *	 cd ${STAT_CONTAINER_DIR} && docker compose up cs2pc-basic-previous-month-stat-generator 2>/tmp/cs2pc-basic-previous-week-stat-generator.stderr 1>/tmp/cs2pc-basic-previous-week-stat-generator.stdout
+
 #
 # CS PLUS
 #
