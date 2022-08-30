@@ -4,21 +4,21 @@ STAT_CONTAINER_DIR=/home/bernhara/PC_CONTAINERs/pc_to_cs_usage_hr_stat_generator
 # WEEKLY XLS Stats
 #
 # every monday, stats of previous week
-0 6 * * 1	 service=cs2pc-basic-previous-week-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up ${service} 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
+0 6 * * 1	 service=cs2pc-basic-previous-week-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up "${service}" 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
 
-0 6 * * 1	 service=cs2pc-plus-previous-week-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up ${service} 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
+0 6 * * 1	 service=cs2pc-plus-previous-week-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up "${service}" 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
 
 #
 # MONTLY XLS Stats
 #
 # every monday, stats of previous week
-30 1 1 * *	 service=cs2pc-basic-previous-month-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up ${service} 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
+30 1 1 * *	 service=cs2pc-basic-previous-month-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up "${service}" 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
 
-30 1 1 * *	 service=cs2pc-plus-previous-month-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up ${service} 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
+30 1 1 * *	 service=cs2pc-plus-previous-month-stat-generator; cd ${STAT_CONTAINER_DIR} && docker compose up "${service}" 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
 
 
 #
 # GRAYLOG uploads
 #
-*/10 * * * *	 service=csdepc-basic-stats-to-graylog; cd ${STAT_CONTAINER_DIR} && docker compose up ${service} 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
-*/10 * * * *	 service=csdepc-plus-stats-to-graylog; cd ${STAT_CONTAINER_DIR} && docker compose up ${service} 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
+*/10 * * * *	 service=csdepc-basic-stats-to-graylog; cd ${STAT_CONTAINER_DIR} && docker compose up "${service}" 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
+*/10 * * * *	 service=csdepc-plus-stats-to-graylog; cd ${STAT_CONTAINER_DIR} && docker compose up "${service}" 1>/tmp/${service}.stdout 2>/tmp/${service}.stderr
