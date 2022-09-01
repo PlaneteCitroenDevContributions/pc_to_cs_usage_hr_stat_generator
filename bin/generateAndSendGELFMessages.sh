@@ -243,8 +243,10 @@ generateAndSendGELFLog ()
 
     gelf_line='{ '${gelf_headers}', '${gelf_body}' }'
 
-    # FIXME: not yet implemented
-    echo '>>>'${gelf_line}'<<<<' 1>&2
+    # FIXME: make this log optional
+    echo 'vvvvvvvvvvvvvvvvvvvvvvvvvv' 1>&2
+    echo "${gelf_line}" 1>&2
+    echo '^^^^^^^^^^^^^^^^^^^^^^^^^^' 1>&2
 
     echo -n "${gelf_line}" | nc -v -w 3 -u "${GELF_UDP_HOST}" "${GELF_UDP_PORT}"
     nc_status=$?
