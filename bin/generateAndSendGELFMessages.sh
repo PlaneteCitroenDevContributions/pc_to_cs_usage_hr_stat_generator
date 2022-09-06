@@ -203,6 +203,10 @@ generateAndSendGELFLog ()
     # generated timestamp
     gelf_headers=${gelf_headers}' "timestamp": '${epoch_time}
 
+    # compute day of week for timestamp
+    day_of_week=$( date "--date=@${epoch_time}" '+%u' )
+    gelf_headers=${gelf_headers}', "day_of_week": '${day_of_week}
+
     # generate each specific field
     gelf_body=$(
 	echo -n '"_pc_service": "'${SERVICE_NAME}'"'
@@ -289,5 +293,5 @@ done < /tmp/time_ordered_stats.txt
 if [[ -n "${last_log_generation_timestamp}" && "${NO_TOUCH}" != '1' ]]
 then
     last_call_file_timestamp=$(( ${last_log_generation_timestamp} + 1 ))
-    touch --date="@${last_call_file_timestamp}" "${RUN_STATES_DIR}/last_call.status"
+    touch "--date=@${last_call_file_timestamp}" "${RUN_STATES_DIR}/last_call.status"
 fi
