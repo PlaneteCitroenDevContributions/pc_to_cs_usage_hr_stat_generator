@@ -205,7 +205,7 @@ generateAndSendGELFLog ()
 
     # compute day of week for timestamp
     day_of_week=$( date "--date=@${epoch_time}" '+%u' )
-    gelf_headers=${gelf_headers}', "day_of_week": '${day_of_week}
+    gelf_headers=${gelf_headers}', "_day_of_week": '${day_of_week}
 
     # generate each specific field
     gelf_body=$(
