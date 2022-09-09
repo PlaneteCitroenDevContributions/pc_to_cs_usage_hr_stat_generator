@@ -106,12 +106,12 @@ then
 fi
     
 
-urldecode ()
+backslash_unescape_string ()
 {
-    url_encoded_string="$1"
-    url_decoded_string=${url_encoded_string//%/\\x}
+    escaped_string="$1"
+    unescaped_string=$( echo -e "${escaped_string}" )
 
-    echo "${url_decoded_string}"
+    echo "${unescaped_string}"
 }
 
 
@@ -220,7 +220,7 @@ generateAndSendGELFLog ()
 
 	if [[ -n "${pc_login}" ]]
 	then
-	    url_decoded_pc_login=$( urldecode "${pc_login}" )
+	    url_decoded_pc_login=$( backslash_unescape_string "${pc_login}" )
 	    echo -n ', "_pc_login": "'${url_decoded_pc_login}'"'
 	fi
 
