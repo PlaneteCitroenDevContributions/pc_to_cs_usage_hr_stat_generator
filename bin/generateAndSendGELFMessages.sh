@@ -106,7 +106,7 @@ then
 fi
     
 
-url_encoded_string ()
+url_decode_string ()
 {
     url_encoded_escaped_string="$1"
     backslahed_string=$(
@@ -223,7 +223,7 @@ generateAndSendGELFLog ()
 
 	if [[ -n "${pc_login}" ]]
 	then
-	    url_decoded_pc_login=$( url_encoded_string "${pc_login}" )
+	    url_decoded_pc_login=$( url_decode_string "${pc_login}" )
 	    echo -n ', "_pc_login": "'${url_decoded_pc_login}'"'
 	fi
 
