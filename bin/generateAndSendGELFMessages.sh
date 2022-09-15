@@ -108,8 +108,11 @@ fi
 
 backslash_unescape_string ()
 {
-    escaped_string="$1"
-    unescaped_string=$( echo -e "${escaped_string}" )
+    url_encoded_escaped_string="$1"
+    backslahed_string=$(
+	echo "${url_encoded_escaped_string}" | sed -e 's/%\([0-F][0-F]\)/\\x\1/g'
+    )
+    unescaped_string=$( echo -e "${backslahed_string}" )
 
     echo "${unescaped_string}"
 }
