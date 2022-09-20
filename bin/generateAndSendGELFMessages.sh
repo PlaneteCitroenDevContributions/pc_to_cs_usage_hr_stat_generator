@@ -112,7 +112,7 @@ url_decode_string ()
     backslahed_string=$(
 	echo "${url_encoded_escaped_string}" | sed -e 's/%\([0-F][0-F]\)/\\x\1/g'
     )
-    unescaped_string=$( echo -e "${backslahed_string}" )
+   unescaped_string=$( echo -e "${backslahed_string}" )
 
     echo "${unescaped_string}"
 }
