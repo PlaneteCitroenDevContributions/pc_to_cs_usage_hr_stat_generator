@@ -117,6 +117,16 @@ url_decode_string ()
     echo "${unescaped_string}"
 }
 
+normalize_ldap_login ()
+{
+    raw_ldap_login="$1"
+    normalized_login=$(
+	echo "${raw_ldap_login}" | tr '[:upper:]' '[:lower:]'
+		       )
+    echo "${normalized_login}"
+}
+
+
 
 remember_to_cache_attribute_for_ip ()
 {
@@ -225,6 +235,9 @@ generateAndSendGELFLog ()
 	then
 	    url_decoded_pc_login=$( url_decode_string "${pc_login}" )
 	    echo -n ', "_pc_login": "'${url_decoded_pc_login}'"'
+
+	    normalized_pc_login=$( normalize_ldap_login "${pc_login}" )
+	    echo -n ', "_pc_login_normalized": "'${normalized_pc_login}'"'
 	fi
 
 	if [[ -n "${real_ip}" ]]
