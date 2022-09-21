@@ -122,7 +122,7 @@ normalize_ldap_login ()
     raw_ldap_login="$1"
     normalized_login=$(
 	echo "${raw_ldap_login}" | tr '[:upper:]' '[:lower:]'
-		       )
+    )
     echo "${normalized_login}"
 }
 
