@@ -11,6 +11,10 @@ PGM_BASENAME=$( basename "$0" )
 : ${GELF_UDP_PORT=''}
 : ${SERVICE_NAME='_dev_'}
 
+: ${VINDECODER.EU.APIKEY:="_VINDECODER.EU.APIKEY_not_set"}
+: ${VINDECODER.EU.SECRET:="_VINDECODER.EU.SECRET_not_set"}
+
+
 : {NO_TOUCH:='0'}
 
 #
@@ -152,6 +156,33 @@ guess_from_cache_attribute_for_ip ()
     echo "${attribute_value_from_cache}"
 }
 
+decode_vin ()
+{
+    vin="$1"
+
+    rm -f /tmp/vin.json
+
+    apiPrefix="https://api.vindecoder.eu/3.2"
+    apikey="${VINDECODER.EU.APIKEY}"
+    secretkey="${VINDECODER.EU.SERCRET}"
+    id="decode"
+
+    key="${vin}|${id}|${apikey}|${secretkey}"
+    sha1_key=$( echo -n "${key}" | sha1sum )
+
+    controlsum=$( echo "${sha1_key}" | cut -c1-10 )
+
+    url="${apiPrefix}/${apikey}/${controlsum}/${id}/${vin}.json"
+
+    curl_http_code=$( curl -s -o /tmp/vin.json -w "%{http_code}" "${url}" )
+    if [ "${curl_http_code}" -eq 200 ]
+    then
+	# "Got 200! All done!"
+	:
+    else
+	echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
+    fi	
+}
 
 generateAndSendGELFLog ()
 {
@@ -253,6 +284,10 @@ generateAndSendGELFLog ()
 	if [[ -n "${vin}" ]]
 	then
 	    echo -n ', "_vin": "'${vin}'"'
+
+	    decode_vin "XXXDEF1GH23456789"
+	    # TODO: decode provided VIN
+	    #!!decode_vin "${vin}"
 	fi
 	
 	if [[ -n "${doc_ref}" ]]
