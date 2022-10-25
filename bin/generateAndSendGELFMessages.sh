@@ -1,5 +1,10 @@
 #! /bin/bash
 
+if [[ -n "${DEBUG_BASH}" ]]
+then
+    set -x
+fi
+
 HERE=$( dirname "$0" )
 PGM_BASENAME=$( basename "$0" )
 
@@ -7,15 +12,15 @@ PGM_BASENAME=$( basename "$0" )
 
 : ${RUN_STATES_DIR:="/var/run_states"}
 
-: ${GELF_UDP_HOST=''}
-: ${GELF_UDP_PORT=''}
-: ${SERVICE_NAME='_dev_'}
+: ${GELF_UDP_HOST:=''}
+: ${GELF_UDP_PORT:=''}
+: ${SERVICE_NAME:='_dev_'}
 
-: ${VINDECODER.EU.APIKEY:="_VINDECODER.EU.APIKEY_not_set"}
-: ${VINDECODER.EU.SECRET:="_VINDECODER.EU.SECRET_not_set"}
+: ${VINDECODER_EU_APIKEY:="_VINDECODER_EU_APIKEY_not_set"}
+: ${VINDECODER_EU_SECRET:="_VINDECODER_EU_SECRET_not_set"}
 
 
-: {NO_TOUCH:='0'}
+: ${NO_TOUCH:='0'}
 
 #
 # check arg = week number
@@ -163,8 +168,8 @@ decode_vin ()
     rm -f /tmp/vin.json
 
     apiPrefix="https://api.vindecoder.eu/3.2"
-    apikey="${VINDECODER.EU.APIKEY}"
-    secretkey="${VINDECODER.EU.SERCRET}"
+    apikey="${VINDECODER_EU_APIKEY}"
+    secretkey="${VINDECODER_EU_SECRET}"
     id="decode"
 
     key="${vin}|${id}|${apikey}|${secretkey}"
@@ -286,6 +291,7 @@ generateAndSendGELFLog ()
 	    echo -n ', "_vin": "'${vin}'"'
 
 	    decode_vin "XXXDEF1GH23456789"
+	    sleep 60
 	    # TODO: decode provided VIN
 	    #!!decode_vin "${vin}"
 	fi
