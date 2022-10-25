@@ -3,7 +3,7 @@ FROM almalinux
 ENV STAT_DATA_DIR=/var/pc_stats
 ENV TZ=Europe/Paris
 
-RUN dnf install -y emacs-nox nc \
+RUN dnf install -y emacs-nox nc jq \
     && dnf clean all
 
 COPY bin/generateAndSendGELFMessages.sh /usr/local/bin
