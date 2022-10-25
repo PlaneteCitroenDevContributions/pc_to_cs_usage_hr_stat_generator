@@ -161,9 +161,11 @@ guess_from_cache_attribute_for_ip ()
     echo "${attribute_value_from_cache}"
 }
 
-decode_vin ()
+decode_vin_fields_to_file ()
 {
     vin="$1"
+    vin_fieldlist_file_name="$2"
+
     cache_file_name="${RUN_STATES_DIR}/cache_data_vin_${vin}.json"
 
     if [[ -r "${cache_file_name}" ]]
@@ -191,7 +193,8 @@ decode_vin ()
 	if [ "${curl_http_code}" -eq 200 ]
 	then
 	    # "Got 200! All done!"
-	    :
+	    # keep result in cache
+	    cp /tmp/vin.json "${cache_file_name}"
 	else
 	    echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
 	    return
@@ -203,7 +206,27 @@ decode_vin ()
 	-e 's/{"label"://' \
 	-e 's/,"value":/:/' \
 	-e 's/}//' \
-	/tmp/vin_fieldlist.json > /tmp/vin_fieldlist.txt
+	/tmp/vin_fieldlist.json > "${vin_fieldlist_file_name}"
+}
+
+get_vin_field_value_from_file ()
+{
+    vin_field_label="$1"
+    vin_fieldlist_file_name="$2"
+
+    field_value=''
+
+    field_line=$( sed -n -e '/^"'"${vin_field_label}"'":/p' "${vin_fieldlist_file_name}" )
+    if [[ -n "${field_line}" ]]
+    then
+	field_value=$( cut -d: -f 2 <<< "${field_line}" )
+	echo "${field_value}"
+	return 0
+    else	
+	echo ''
+	return 1
+    fi
+
 }
 
 generateAndSendGELFLog ()
@@ -307,10 +330,17 @@ generateAndSendGELFLog ()
 	then
 	    echo -n ', "_vin": "'${vin}'"'
 
-	    decode_vin "XXXDEF1GH23456789"
-	    sleep 5
+	    decode_vin_fields_to_file "XXXDEF1GH23456789" /tmp/vin_fieldlist.txt
 	    # TODO: decode provided VIN
-	    #!!decode_vin "${vin}"
+	    #!!! decode_vin_fields_to_file "${vin}" /tmp/vin_fieldlist.txt
+
+	    for vin_field_name in "Model" "Production Stopped" "Production Started" "Fuel Type - Primary" "Model Year" "Series" "Transmission" "Engine (full)"
+	    do
+		if f=$( get_vin_field_value_from_file "${vin_field_name}" /tmp/vin_fieldlist.txt )
+		then
+		    echo -n ', "_vin_'"${vin_field_name}"'": '"${f}"
+		fi
+	    done
 	fi
 	
 	if [[ -n "${doc_ref}" ]]
