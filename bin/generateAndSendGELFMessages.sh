@@ -186,7 +186,15 @@ decode_vin ()
 	:
     else
 	echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
-    fi	
+	return
+    fi
+
+    cat /tmp/vin.json | jq -c '."decode"|.[]' > /tmp/vin_fieldlist.json
+    sed \
+	-e 's/{"label"://' \
+	-e 's/,"value":/:/' \
+	-e 's/}//' \
+	/tmp/vin_fieldlist.json > /tmp/vin_fieldlist.csv
 }
 
 generateAndSendGELFLog ()
@@ -291,7 +299,7 @@ generateAndSendGELFLog ()
 	    echo -n ', "_vin": "'${vin}'"'
 
 	    decode_vin "XXXDEF1GH23456789"
-	    sleep 60
+	    sleep 5
 	    # TODO: decode provided VIN
 	    #!!decode_vin "${vin}"
 	fi
