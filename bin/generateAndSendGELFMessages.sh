@@ -203,7 +203,7 @@ decode_vin ()
 	-e 's/{"label"://' \
 	-e 's/,"value":/:/' \
 	-e 's/}//' \
-	/tmp/vin_fieldlist.json > /tmp/vin_fieldlist.csv
+	/tmp/vin_fieldlist.json > /tmp/vin_fieldlist.txt
 }
 
 generateAndSendGELFLog ()
