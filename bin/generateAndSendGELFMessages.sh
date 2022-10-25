@@ -164,29 +164,38 @@ guess_from_cache_attribute_for_ip ()
 decode_vin ()
 {
     vin="$1"
+    cache_file_name="${RUN_STATES_DIR}/cache_data_vin_${vin}.json"
 
-    rm -f /tmp/vin.json
-
-    apiPrefix="https://api.vindecoder.eu/3.2"
-    apikey="${VINDECODER_EU_APIKEY}"
-    secretkey="${VINDECODER_EU_SECRET}"
-    id="decode"
-
-    key="${vin}|${id}|${apikey}|${secretkey}"
-    sha1_key=$( echo -n "${key}" | sha1sum )
-
-    controlsum=$( echo "${sha1_key}" | cut -c1-10 )
-
-    url="${apiPrefix}/${apikey}/${controlsum}/${id}/${vin}.json"
-
-    curl_http_code=$( curl -s -o /tmp/vin.json -w "%{http_code}" "${url}" )
-    if [ "${curl_http_code}" -eq 200 ]
+    if [[ -r "${cache_file_name}" ]]
     then
-	# "Got 200! All done!"
-	:
+	cp "${cache_file_name}" /tmp/vin.json
     else
-	echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
-	return
+
+	# try to get VIN
+
+	rm -f /tmp/vin.json
+
+	apiPrefix="https://api.vindecoder.eu/3.2"
+	apikey="${VINDECODER_EU_APIKEY}"
+	secretkey="${VINDECODER_EU_SECRET}"
+	id="decode"
+
+	key="${vin}|${id}|${apikey}|${secretkey}"
+	sha1_key=$( echo -n "${key}" | sha1sum )
+
+	controlsum=$( echo "${sha1_key}" | cut -c1-10 )
+
+	url="${apiPrefix}/${apikey}/${controlsum}/${id}/${vin}.json"
+
+	curl_http_code=$( curl -s -o /tmp/vin.json -w "%{http_code}" "${url}" )
+	if [ "${curl_http_code}" -eq 200 ]
+	then
+	    # "Got 200! All done!"
+	    :
+	else
+	    echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
+	    return
+	fi
     fi
 
     cat /tmp/vin.json | jq -c '."decode"|.[]' > /tmp/vin_fieldlist.json
