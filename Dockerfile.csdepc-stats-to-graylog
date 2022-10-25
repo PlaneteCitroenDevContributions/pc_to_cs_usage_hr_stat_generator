@@ -3,6 +3,9 @@ FROM almalinux
 ENV STAT_DATA_DIR=/var/pc_stats
 ENV TZ=Europe/Paris
 
+ENV VINDECODER_EU_APIPREFIX
+ENV VINDECODER_EU_SECRET
+
 RUN dnf install -y emacs-nox nc jq \
     && dnf clean all
 
