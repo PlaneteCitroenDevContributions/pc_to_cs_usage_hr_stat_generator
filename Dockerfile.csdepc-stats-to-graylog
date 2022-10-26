@@ -1,13 +1,13 @@
 FROM almalinux
 
+RUN dnf install -y emacs-nox nc jq \
+    && dnf clean all
+
 ENV STAT_DATA_DIR=/var/pc_stats
 ENV TZ=Europe/Paris
 
-ENV VINDECODER_EU_APIPREFIX
-ENV VINDECODER_EU_SECRET
-
-RUN dnf install -y emacs-nox nc jq \
-    && dnf clean all
+ENV VINDECODER_EU_APIPREFIX="_no_default_value_"
+ENV VINDECODER_EU_SECRET="_no_default_value_"
 
 COPY bin/generateAndSendGELFMessages.sh /usr/local/bin
 
