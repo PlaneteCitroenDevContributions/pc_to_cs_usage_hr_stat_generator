@@ -338,7 +338,8 @@ generateAndSendGELFLog ()
 	    do
 		if f=$( get_vin_field_value_from_file "${vin_field_name}" /tmp/vin_fieldlist.txt )
 		then
-		    echo -n ', "_vin_'"${vin_field_name}"'": '"${f}"
+		    gelf_field_name="_vin_data_"$( tr '[:blank:]' _ <<< "${vin_field_name}")
+		    echo -n ', "'"${gelf_field_name}"'": '"${f}"
 		fi
 	    done
 	fi
