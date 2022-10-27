@@ -330,9 +330,8 @@ generateAndSendGELFLog ()
 	then
 	    echo -n ', "_vin": "'${vin}'"'
 
-	    decode_vin_fields_to_file "XXXDEF1GH23456789" /tmp/vin_fieldlist.txt
-	    # TODO: decode provided VIN
-	    #!!! decode_vin_fields_to_file "${vin}" /tmp/vin_fieldlist.txt
+	    decode_vin_fields_to_file "${vin}" /tmp/vin_fieldlist.txt
+	    #!! FOR TEST: decode_vin_fields_to_file "XXXDEF1GH23456789" /tmp/vin_fieldlist.txt
 
 	    for vin_field_name in \
 		"Vehicle ID" \
