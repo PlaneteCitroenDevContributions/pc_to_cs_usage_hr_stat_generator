@@ -201,12 +201,7 @@ decode_vin_fields_to_file ()
 	fi
     fi
 
-    cat /tmp/vin.json | jq -c '."decode"|.[]' > /tmp/vin_fieldlist.json
-    # sed \
-    # 	-e 's/{"label"://' \
-    # 	-e 's/,"value":/:/' \
-    # 	-e 's/}//' \
-    # 	/tmp/vin_fieldlist.json > "${vin_fieldlist_file_name}"
+    cat /tmp/vin.json | jq -c '."decode"|.[]' > "${vin_fieldlist_file_name}"
 }
 
 map_vin_json_field_name_to_gelf_attribute ()
