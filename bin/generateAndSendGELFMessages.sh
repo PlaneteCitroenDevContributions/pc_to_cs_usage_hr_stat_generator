@@ -202,11 +202,27 @@ decode_vin_fields_to_file ()
     fi
 
     cat /tmp/vin.json | jq -c '."decode"|.[]' > /tmp/vin_fieldlist.json
-    sed \
-	-e 's/{"label"://' \
-	-e 's/,"value":/:/' \
-	-e 's/}//' \
-	/tmp/vin_fieldlist.json > "${vin_fieldlist_file_name}"
+    # sed \
+    # 	-e 's/{"label"://' \
+    # 	-e 's/,"value":/:/' \
+    # 	-e 's/}//' \
+    # 	/tmp/vin_fieldlist.json > "${vin_fieldlist_file_name}"
+}
+
+map_vin_json_field_name_to_gelf_attribute ()
+{
+    json_field_name="$1"
+
+    case "${json_field_name}" in
+	"XXVehicle ID")
+	    gelf_attribute="VehicleID_TTTT"
+	    ;;
+	*)
+	    gelf_attribute_suffix=$( tr '[:blank:]' _ <<< "${vin_field_name}")
+	    ;;
+    esac
+
+    echo "_vin_data_${gelf_attribute}"
 }
 
 get_vin_field_value_from_file ()
@@ -216,10 +232,10 @@ get_vin_field_value_from_file ()
 
     field_value=''
 
-    field_line=$( sed -n -e '/^"'"${vin_field_label}"'":/p' "${vin_fieldlist_file_name}" )
+    field_line=$( sed -n -e '/"label":"'"${vin_field_label}"'"/p' "${vin_fieldlist_file_name}" )
     if [[ -n "${field_line}" ]]
     then
-	field_value=$( cut -d: -f 2 <<< "${field_line}" )
+	field_value=$( jq '.value' <<< "${field_line}" )
 	echo "${field_value}"
 	return 0
     else	
@@ -330,8 +346,8 @@ generateAndSendGELFLog ()
 	then
 	    echo -n ', "_vin": "'${vin}'"'
 
-	    decode_vin_fields_to_file "${vin}" /tmp/vin_fieldlist.txt
-	    #!! FOR TEST: decode_vin_fields_to_file "XXXDEF1GH23456789" /tmp/vin_fieldlist.txt
+	    decode_vin_fields_to_file "${vin}" /tmp/vin_fieldlist.json
+	    #!! FOR TEST: decode_vin_fields_to_file "XXXDEF1GH23456789" /tmp/vin_fieldlist.json
 
 	    for vin_field_name in \
 		"Vehicle ID" \
@@ -352,9 +368,9 @@ generateAndSendGELFLog ()
 		    "Production Started" \
 		    "Engine (full)"
 	    do
-		if f=$( get_vin_field_value_from_file "${vin_field_name}" /tmp/vin_fieldlist.txt )
+		if f=$( get_vin_field_value_from_file "${vin_field_name}" /tmp/vin_fieldlist.json )
 		then
-		    gelf_field_name="_vin_data_"$( tr '[:blank:]' _ <<< "${vin_field_name}")
+		    gelf_field_name=$( map_vin_json_field_name_to_gelf_attribute "${vin_field_name}" )
 		    echo -n ', "'"${gelf_field_name}"'": '"${f}"
 		fi
 	    done
