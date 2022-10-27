@@ -237,7 +237,6 @@ get_vin_field_value_from_file ()
 	echo ''
 	return 1
     fi
-
 }
 
 generateAndSendGELFLog ()
