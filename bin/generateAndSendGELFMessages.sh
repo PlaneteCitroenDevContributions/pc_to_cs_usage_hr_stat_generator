@@ -217,7 +217,7 @@ map_vin_json_field_name_to_gelf_attribute ()
 	    ;;
     esac
 
-    echo "_vin_data_${gelf_attribute}"
+    echo "_vin_data_${gelf_attribute_suffix}"
 }
 
 get_vin_field_value_from_file ()
@@ -227,10 +227,10 @@ get_vin_field_value_from_file ()
 
     field_value=''
 
-    field_line=$( sed -n -e '/"label":"'"${vin_field_label}"'"/p' "${vin_fieldlist_file_name}" )
+    field_line=$( grep --max-count=1 --fixed-strings '"label":"'"${vin_field_label}"'"' "${vin_fieldlist_file_name}" )
     if [[ -n "${field_line}" ]]
     then
-	field_value=$( jq '.value' <<< "${field_line}" )
+	field_value=$( echo "${field_line}" | jq '.value' )
 	echo "${field_value}"
 	return 0
     else	
