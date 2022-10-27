@@ -334,7 +334,24 @@ generateAndSendGELFLog ()
 	    # TODO: decode provided VIN
 	    #!!! decode_vin_fields_to_file "${vin}" /tmp/vin_fieldlist.txt
 
-	    for vin_field_name in "Model" "Production Stopped" "Production Started" "Fuel Type - Primary" "Model Year" "Series" "Transmission" "Engine (full)"
+	    for vin_field_name in \
+		"Vehicle ID" \
+		    "Make" \
+		    "Model" \
+		    "Model Year" \
+		    "Series" \
+		    "Vehicle Specification" \
+		    "Engine Displacement (ccm)" \
+		    "Fuel Type - Primary" \
+		    "Engine Power (HP)" \
+		    "Engine Code" \
+		    "Transmission" \
+		    "Number of Gears" \
+		    "Emission Standard" \
+		    "Suspension" \
+		    "Production Stopped" \
+		    "Production Started" \
+		    "Engine (full)"
 	    do
 		if f=$( get_vin_field_value_from_file "${vin_field_name}" /tmp/vin_fieldlist.txt )
 		then
