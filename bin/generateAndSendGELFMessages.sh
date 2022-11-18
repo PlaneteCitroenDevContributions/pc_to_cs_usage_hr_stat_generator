@@ -352,34 +352,40 @@ generateAndSendGELFLog ()
 
 	    echo -n ', "_vin": "'${normalized_vin}'"'
 
+	    rm -f /tmp/vin_fieldlist.json
 	    decode_vin_fields_to_file "${normalized_vin}" /tmp/vin_fieldlist.json
 	    #!! FOR TEST: decode_vin_fields_to_file "XXXDEF1GH23456789" /tmp/vin_fieldlist.json
 
-	    for vin_field_name in \
-		"Vehicle ID" \
-		    "Make" \
-		    "Model" \
-		    "Model Year" \
-		    "Series" \
-		    "Vehicle Specification" \
-		    "Engine Displacement (ccm)" \
-		    "Fuel Type - Primary" \
-		    "Engine Power (HP)" \
-		    "Engine Code" \
-		    "Transmission" \
-		    "Number of Gears" \
-		    "Emission Standard" \
-		    "Suspension" \
-		    "Production Stopped" \
-		    "Production Started" \
-		    "Engine (full)"
-	    do
-		if f=$( get_vin_field_value_from_file "${vin_field_name}" /tmp/vin_fieldlist.json )
-		then
-		    gelf_field_name=$( map_vin_json_field_name_to_gelf_attribute "${vin_field_name}" )
-		    echo -n ', "'"${gelf_field_name}"'": '"${f}"
-		fi
-	    done
+	    if [ -r /tmp/vin_fieldlist.json ]
+	    then
+		# decoding worked since we could generate the file containing the fields
+
+		for vin_field_name in \
+		    "Vehicle ID" \
+			"Make" \
+			"Model" \
+			"Model Year" \
+			"Series" \
+			"Vehicle Specification" \
+			"Engine Displacement (ccm)" \
+			"Fuel Type - Primary" \
+			"Engine Power (HP)" \
+			"Engine Code" \
+			"Transmission" \
+			"Number of Gears" \
+			"Emission Standard" \
+			"Suspension" \
+			"Production Stopped" \
+			"Production Started" \
+			"Engine (full)"
+		do
+		    if f=$( get_vin_field_value_from_file "${vin_field_name}" /tmp/vin_fieldlist.json )
+		    then
+			gelf_field_name=$( map_vin_json_field_name_to_gelf_attribute "${vin_field_name}" )
+			echo -n ', "'"${gelf_field_name}"'": '"${f}"
+		    fi
+		done
+	    fi
 	fi
 	
 	if [[ -n "${doc_ref}" ]]
