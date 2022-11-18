@@ -194,10 +194,20 @@ decode_vin_fields_to_file ()
 	then
 	    # "Got 200! All done!"
 	    # keep result in cache
-	    cp /tmp/vin.json "${cache_file_name}"
+	    if grep -q '"error":true' /tmp/vin.json
+	    then
+		# resulting json mentions an error
+		# TODO: manage these errors
+		echo "ERROR while fetching url ${url} to decode VIN ${vin}: result $( cat /tmp/vin.json )" 1>&2
+		return
+		# NOT REACHED
+	    else
+		cp /tmp/vin.json "${cache_file_name}"
+	    fi
 	else
 	    echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
 	    return
+	    # NOT REACHED
 	fi
     fi
 
