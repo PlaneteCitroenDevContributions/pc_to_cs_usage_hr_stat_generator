@@ -322,7 +322,7 @@ generateAndSendGELFLog ()
 	    url_decoded_pc_login=$( url_decode_string "${pc_login}" )
 	    echo -n ', "_pc_login": "'${url_decoded_pc_login}'"'
 
-	    normalized_pc_login=$( normalize_ldap_login "${pc_login}" )
+	    normalized_pc_login=$( normalize_ldap_login "${url_decoded_pc_login}" )
 	    echo -n ', "_pc_login_normalized": "'${normalized_pc_login}'"'
 	fi
 
