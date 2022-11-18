@@ -348,9 +348,11 @@ generateAndSendGELFLog ()
 
 	if [[ -n "${vin}" ]]
 	then
-	    echo -n ', "_vin": "'${vin}'"'
+	    normalized_vin=$( tr '[:lower:]' '[:upper:]' <<< "${vin}" )
 
-	    decode_vin_fields_to_file "${vin}" /tmp/vin_fieldlist.json
+	    echo -n ', "_vin": "'${normalized_vin}'"'
+
+	    decode_vin_fields_to_file "${normalized_vin}" /tmp/vin_fieldlist.json
 	    #!! FOR TEST: decode_vin_fields_to_file "XXXDEF1GH23456789" /tmp/vin_fieldlist.json
 
 	    for vin_field_name in \
