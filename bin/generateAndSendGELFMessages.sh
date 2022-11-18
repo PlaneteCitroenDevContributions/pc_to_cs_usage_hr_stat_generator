@@ -352,6 +352,9 @@ generateAndSendGELFLog ()
 
 	    echo -n ', "_vin": "'${normalized_vin}'"'
 
+	    # TODO:
+	    # decode_vin_fields_to_file should return a status to check if decoding has been performed
+	    # will replace the check of the existance of the file
 	    rm -f /tmp/vin_fieldlist.json
 	    decode_vin_fields_to_file "${normalized_vin}" /tmp/vin_fieldlist.json
 	    #!! FOR TEST: decode_vin_fields_to_file "XXXDEF1GH23456789" /tmp/vin_fieldlist.json
