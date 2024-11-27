@@ -17,7 +17,7 @@ services:
         VINDECODER_EU_APIKEY: ${VINDECODER_EU_APIKEY?not set VINDECODER_EU_APIKEY}
         VINDECODER_EU_SECRET: ${VINDECODER_EU_SECRET?not set VINDECODER_EU_SECRET}
      volumes:
-        - ./../PcToCsReverseProxy/pc_stats/:/var/pc_stats/:ro
+        - ./../ServiceBox4PC_BASIC_ReverseProxy/pc_stats/:/var/pc_stats/:ro
         - ./run_states_basic/:/var/run_states/
      command:
         - /bin/bash
