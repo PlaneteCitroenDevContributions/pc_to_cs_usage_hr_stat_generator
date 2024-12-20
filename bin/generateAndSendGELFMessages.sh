@@ -126,6 +126,8 @@ url_decode_string ()
     echo "${unescaped_string}"
 }
 
+
+# FIXME: this function may be removed
 normalize_ldap_login ()
 {
     raw_ldap_login="$1"
@@ -137,6 +139,7 @@ normalize_ldap_login ()
 
 
 
+# FIXME: this function may be removed
 remember_to_cache_attribute_for_ip ()
 {
     real_ip="$1"
@@ -146,6 +149,7 @@ remember_to_cache_attribute_for_ip ()
     echo "${attribute_value_to_cache}" > "${RUN_STATES_DIR}/cache_data_${real_ip}_last_value_for_${attribute_name_to_cache}"
 }
 
+# FIXME: this function may be removed
 guess_from_cache_attribute_for_ip ()
 {
     real_ip="$1"
@@ -199,14 +203,14 @@ decode_vin_fields_to_file ()
 		# resulting json mentions an error
 		# TODO: manage these errors
 		echo "ERROR while fetching url ${url} to decode VIN ${vin}: result $( cat /tmp/vin.json )" 1>&2
-		return
+		return 1
 		# NOT REACHED
 	    else
 		cp /tmp/vin.json "${cache_file_name}"
 	    fi
 	else
 	    echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
-	    return
+	    return 1
 	    # NOT REACHED
 	fi
     fi
@@ -251,50 +255,43 @@ get_vin_field_value_from_file ()
 
 generateAndSendGELFLog ()
 {
-    # "1616779865" "bernhara" "login" "success" "90.8.128.173" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
+    # '1616779865' 'bernhara' 'login' 'success' '90.8.128.173' 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
     
-    line="$@"
-    # echo ">>>>>>>>>>>>>>>>>>>>>${line}<<<<<<<<<<<<<<<<<<<<<"
-
-    protected_line=$(
-	echo "${line}" | \
-	    sed \
-		-e "s/^\"/'/" \
-		-e "s/\" \"/' '/g" \
-		-e "s/\"$/'/"
-   )
+    protected_line="$@"
     
     # echo ">>>>>>>>>>>>>>>>>>>>>${protected_line}<<<<<<<<<<<<<<<<<<<<<"
 
     # FIXME: eval should ne be required
-    eval declare -a tab=( "${protected_line}" )
+    if eval declare -a tab=( "${protected_line}" )
+    then
+	:
+    else
+	return 1
+    fi
 
-    epoch_time=${tab[0]}
-    action=${tab[1]}
-    param=${tab[2]}
-    status=${tab[3]}
-    real_ip=${tab[4]}
-    user_agent=${tab[5]}
+    epoch_time="${tab[0]}"
+    user="${tab[1]}"
+    action="${tab[2]}"
+    param="${tab[3]}"
+    status="${tab[4]}"
+    real_ip="${tab[5]}"
+    user_agent="${tab[6]}"
 
-    pc_login=''
     doc_ref=''
     vin=''
 
     case "${action}" in
 
 	"login" )
-	    pc_login="${param}"
-	    remember_to_cache_attribute_for_ip ${real_ip} "pc_login" "${pc_login}" 
+	    normalized_pc_login="${param}"
 	    ;;
 
 	"documentation" )
 	    doc_ref="${param}"
-	    pc_login=$( guess_from_cache_attribute_for_ip ${real_ip} "pc_login" )
 	    ;;
 
 	"vin" )
 	    vin="${param}"
-	    pc_login=$( guess_from_cache_attribute_for_ip ${real_ip} "pc_login" )
 	    ;;
 
 	*)
@@ -327,15 +324,18 @@ generateAndSendGELFLog ()
 	    echo -n ', "_status": "'${status}'"'
 	fi
 
-	if [[ -n "${pc_login}" ]]
+	if [[ -n "${user}" ]]
 	then
-	    url_decoded_pc_login=$( url_decode_string "${pc_login}" )
-	    echo -n ', "_pc_login": "'${url_decoded_pc_login}'"'
-
-	    normalized_pc_login=$( normalize_ldap_login "${url_decoded_pc_login}" )
-	    echo -n ', "_pc_login_normalized": "'${normalized_pc_login}'"'
+	    echo -n ', "_pc_login": "'${user}'"'
 	fi
 
+	if [[ -n "${normalized_pc_login}" ]]
+	then
+	    #FIXME: normalized_pc_login is still used since old logs have been generated with that field
+	    # but it should be "remote_user"
+	    echo -n ', "_pc_login_normalized": "'${normalized_pc_login}'"'
+	fi
+	
 	if [[ -n "${real_ip}" ]]
 	then
 	    echo -n ', "_real_ip": "'${real_ip}'"'
