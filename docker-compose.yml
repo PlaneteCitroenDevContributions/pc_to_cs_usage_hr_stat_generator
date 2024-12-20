@@ -14,15 +14,18 @@ services:
         GELF_UDP_PORT: 12201
         SERVICE_NAME: cs2pc-basic
         NO_TOUCH: 0
+        SLEEP_DELAY: 10m
         VINDECODER_EU_APIKEY: ${VINDECODER_EU_APIKEY?not set VINDECODER_EU_APIKEY}
         VINDECODER_EU_SECRET: ${VINDECODER_EU_SECRET?not set VINDECODER_EU_SECRET}
+        DEBUG_BASH: 1
      volumes:
         - ./../ServiceBox4PC_BASIC_ReverseProxy/pc_stats/:/var/pc_stats/:ro
         - ./run_states_basic/:/var/run_states/
      command:
         - /bin/bash
         - -x
-        - "/usr/local/bin/generateAndSendGELFMessages.sh"
+        - -c
+        - "while true; do /usr/local/bin/generateAndSendGELFMessages.sh; exit 1; sleep \"$${SLEEP_DELAY}\"; done"
 
   csdepc-plus-stats-to-graylog:
      build:
