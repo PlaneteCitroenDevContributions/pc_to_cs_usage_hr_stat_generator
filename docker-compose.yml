@@ -27,6 +27,19 @@ services:
         - -c
         - "while true; do /usr/local/bin/generateAndSendGELFMessages.sh; exit 1; sleep \"$${SLEEP_DELAY}\"; done"
 
+  rotate-csdepc-basic-stats:
+     image: alpine
+     environment:
+        TZ: Europe/Paris
+        SLEEP_DELAY: 10m
+     volumes:
+        - ./../ServiceBox4PC_BASIC_ReverseProxy/pc_stats/:/var/pc_stats/:rw
+     command:
+        - /bin/bash
+        - -x
+        - -c
+        - "while true; do now=$(date '+%s'); let previously=\"\$${now} - 250000\"; sleep \"$${SLEEP_DELAY}\"; done"
+        
   csdepc-plus-stats-to-graylog:
      build:
         context: .
