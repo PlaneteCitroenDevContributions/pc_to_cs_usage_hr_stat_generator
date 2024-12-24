@@ -31,14 +31,14 @@ services:
      image: alpine
      environment:
         TZ: Europe/Paris
-        SLEEP_DELAY: 10m
      volumes:
         - ./../ServiceBox4PC_BASIC_ReverseProxy/pc_stats/:/var/pc_stats/:rw
+        - ./pc_stats_rotate.conf:/etc/logrotate.conf:ro
      command:
-        - /bin/bash
-        - -x
+        - /bin/sh
         - -c
-        - "while true; do now=$(date '+%s'); let previously=\"\$${now} - 250000\"; sleep \"$${SLEEP_DELAY}\"; done"
+        - -x
+        - "/sbin/apk add bash logrotate; crond -f -d 8"
         
   csdepc-plus-stats-to-graylog:
      build:
