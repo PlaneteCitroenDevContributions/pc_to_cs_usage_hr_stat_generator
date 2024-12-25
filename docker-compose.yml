@@ -37,9 +37,7 @@ services:
         - /bin/sh
         - -c
         - -x
-        - "while true; do find /var/pc_stats/ -name '*.txt-test' -mtime +120 -print; sleep 30s; done"
-#        /sbin/apk add bash logrotate; crond -f -d 8"
-#        - "/sbin/apk add logrotate; cp /etc/pc_stats_logrotate.conf /etc/logrotate.conf; chmod go-rw /etc/logrotate.conf; logrotate -f -v /etc/logrotate.conf"
+        - "while true; do find /var/pc_stats/ -name '*.txt' -mtime +120 -print -delete; sleep 1h; done"
         
   csdepc-plus-stats-to-graylog:
      build:
