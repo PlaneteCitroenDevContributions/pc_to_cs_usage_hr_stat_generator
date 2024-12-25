@@ -61,6 +61,18 @@ services:
         - -x
         - "/usr/local/bin/generateAndSendGELFMessages.sh"
 
+  rotate-csdepc-plus-stats:
+     image: alpine
+     environment:
+        TZ: Europe/Paris
+     volumes:
+        - ./../PcToCs-PLUS-ReverseProxy/pc_stats/:/var/pc_stats/:rw
+     command:
+        - /bin/sh
+        - -c
+        - -x
+        - "while true; do find /var/pc_stats/ -name '*.txt' -mtime +120 -print -delete; sleep 1h; done"
+        
 volumes:
 
    STAT_VOLUME:
