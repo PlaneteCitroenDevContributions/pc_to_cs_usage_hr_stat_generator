@@ -51,15 +51,17 @@ services:
         GELF_UDP_PORT: 12201
         SERVICE_NAME: cs2pc-plus
         NO_TOUCH: 0
+        SLEEP_DELAY: 10m
         VINDECODER_EU_APIKEY: ${VINDECODER_EU_APIKEY?not set VINDECODER_EU_APIKEY}
         VINDECODER_EU_SECRET: ${VINDECODER_EU_SECRET?not set VINDECODER_EU_SECRET}
      volumes:
         - ./../PcToCs-PLUS-ReverseProxy/pc_stats/:/var/pc_stats/:ro
+#!! FOR TESTs        - ./../ServiceBox4PC_DEV_ReverseProxy/pc_stats/:/var/pc_stats/:ro
         - ./run_states_plus/:/var/run_states/
      command:
         - /bin/bash
-        - -x
-        - "/usr/local/bin/generateAndSendGELFMessages.sh"
+        - -c
+        - "while true; do bash -x /usr/local/bin/generateAndSendGELFMessages.sh; sleep \"$${SLEEP_DELAY}\"; done"
 
   rotate-csdepc-plus-stats:
      image: alpine
