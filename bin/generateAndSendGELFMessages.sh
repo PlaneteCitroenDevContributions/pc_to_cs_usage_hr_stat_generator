@@ -259,25 +259,23 @@ generateAndSendGELFLog ()
 {
     # FIXME: this example is no more relevant
     #!!! 1736156446 bernhara login raphael.bernhard@orange.fr success 86.241.57.40 Mozilla/5.0\ \(Windows\ NT\ 10.0\;\ Win64\;\ x64\)\ AppleWebKit/537.36\ \(KHTML\,\ like\ Gecko\)\ Chrome/131.0.0.0\ Safari/537.36
-    # '1616779865' 'bernhara' 'login' 'success' '90.8.128.173' 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
+    # "1616779865" "bernhara" "login" "raphael.bernhard@orange.fr" "success" "90.8.128.173" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
     
-    escaped_fields_line="$@"
-    for i in "$@"
-    do
-	echo "XXXX${i}XXXX" 1>&2
-    done
+    stat_line="$@"
     
     # echo ">>>>>>>>>>>>>>>>>>>>>${protected_line}<<<<<<<<<<<<<<<<<<<<<"
 
-    eval declare -a escaped_strings_table=( ${escaped_fields_line} )
+    eval declare -a escaped_strings_table=( ${stat_line} )
 
-    epoch_time="${escaped_strings_table[0]}"
-    user="${escaped_strings_table[1]}"
-    action="${escaped_strings_table[2]}"
-    param="${escaped_strings_table[3]}"
-    status="${escaped_strings_table[4]}"
-    real_ip="${escaped_strings_table[5]}"
-    eval user_agent=${escaped_strings_table[6]}
+    # each field is of the form "value as an escaped string"
+
+    eval "epoch_time=${escaped_strings_table[0]}"
+    eval "user=${escaped_strings_table[1]}"
+    eval "action=${escaped_strings_table[2]}"
+    eval "param=${escaped_strings_table[3]}"
+    eval "status=${escaped_strings_table[4]}"
+    eval "real_ip=${escaped_strings_table[5]}"
+    eval "user_agent=${escaped_strings_table[6]}"
 
     doc_ref=''
     vin=''
@@ -430,10 +428,9 @@ ${all_stat_files}
 
 
 last_log_generation_timestamp=''
-while read -r line
+while read -r stat_line
 do
-    set -- ${line}
-    treated_time_stamp=$( generateAndSendGELFLog "$@" )
+    treated_time_stamp=$( generateAndSendGELFLog "${stat_line}" )
     generation_status=$?
     if [[ ${generation_status} -eq 0 ]]
     then
