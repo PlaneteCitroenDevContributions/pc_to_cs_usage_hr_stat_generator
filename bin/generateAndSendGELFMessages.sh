@@ -236,6 +236,8 @@ map_vin_json_field_name_to_gelf_attribute ()
 
 get_vin_field_value_from_file ()
 {
+    # TODO: this should be replaced be a simple "jq" expression
+    
     vin_field_label="$1"
     vin_fieldlist_file_name="$2"
 
