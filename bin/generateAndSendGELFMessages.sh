@@ -255,19 +255,14 @@ get_vin_field_value_from_file ()
 
 generateAndSendGELFLog ()
 {
+    # FIXME: this example is no more relevant
     # '1616779865' 'bernhara' 'login' 'success' '90.8.128.173' 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
     
-    protected_line="$@"
+    escaped_fields_line="$@"
     
     # echo ">>>>>>>>>>>>>>>>>>>>>${protected_line}<<<<<<<<<<<<<<<<<<<<<"
 
-    # FIXME: eval should ne be required
-    if eval declare -a tab=( "${protected_line}" )
-    then
-	:
-    else
-	return 1
-    fi
+    declare -a tab=( ${escaped_fields_line} )
 
     epoch_time="${tab[0]}"
     user="${tab[1]}"
