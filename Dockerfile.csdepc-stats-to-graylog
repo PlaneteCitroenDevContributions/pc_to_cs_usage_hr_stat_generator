@@ -1,4 +1,4 @@
-FROM almalinux
+FROM almalinux:9
 
 RUN dnf install -y emacs-nox nc jq \
     && dnf clean all
