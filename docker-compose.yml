@@ -25,7 +25,7 @@ services:
         - /bin/bash
         - -x
         - -c
-        - "while true; do /usr/local/bin/generateAndSendGELFMessages.sh; exit 1; sleep \"$${SLEEP_DELAY}\"; done"
+        - "while true; do /usr/local/bin/generateAndSendGELFMessages.sh; sleep \"$${SLEEP_DELAY}\"; done"
 
   rotate-csdepc-basic-stats:
      image: alpine
