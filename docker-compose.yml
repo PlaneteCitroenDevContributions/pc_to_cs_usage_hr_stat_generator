@@ -7,6 +7,7 @@ services:
         context: .
         dockerfile: Dockerfile.csdepc-stats-to-graylog
      image: rcsdepc-stats-to-graylog:latest
+     restart: unless-stopped
      environment:
         STAT_DATA_DIR: /var/pc_stats
         TZ: Europe/Paris
@@ -29,6 +30,7 @@ services:
 
   rotate-csdepc-basic-stats:
      image: alpine
+     restart: unless-stopped
      environment:
         TZ: Europe/Paris
      volumes:
@@ -44,6 +46,7 @@ services:
         context: .
         dockerfile: Dockerfile.csdepc-stats-to-graylog
      image: rcsdepc-stats-to-graylog:latest
+     restart: unless-stopped
      environment:
         STAT_DATA_DIR: /var/pc_stats
         TZ: Europe/Paris
@@ -65,6 +68,7 @@ services:
 
   rotate-csdepc-plus-stats:
      image: alpine
+     restart: unless-stopped
      environment:
         TZ: Europe/Paris
      volumes:
