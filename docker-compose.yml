@@ -72,7 +72,7 @@ services:
      environment:
         TZ: Europe/Paris
      volumes:
-        - ./../PcToCs-PLUS-ReverseProxy/pc_stats/:/var/pc_stats/:rw
+        - ./../ServiceBox4PC_PLUS_ReverseProxy/pc_stats/:/var/pc_stats/:rw
      command:
         - /bin/sh
         - -c
