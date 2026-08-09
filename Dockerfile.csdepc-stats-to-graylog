@@ -13,5 +13,3 @@ COPY bin/generateAndSendGELFMessages.sh /usr/local/bin
 
 # defaults to NextCloud user/group
 USER 33:33
-
-#ENTRYPOINT [ "/usr/local/bin/generateHrStatsForPeriod.sh" ]
