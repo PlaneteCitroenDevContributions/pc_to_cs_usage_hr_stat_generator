@@ -258,9 +258,9 @@ get_vin_field_value_from_file ()
 generateAndSendGELFLog ()
 {
     # FIXME: this example is no more relevant
-    #!!! 1736156446 bernhara login raphael.bernhard@orange.fr success 86.241.57.40 Mozilla/5.0\ \(Windows\ NT\ 10.0\;\ Win64\;\ x64\)\ AppleWebKit/537.36\ \(KHTML\,\ like\ Gecko\)\ Chrome/131.0.0.0\ Safari/537.36
-    # "1616779865" "bernhara" "login" "raphael.bernhard@orange.fr" "success" "90.8.128.173" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
-    
+    #!!! "1786258344" "bernhara" "login" "bernhara@cloud.forumtestplanetecitroen.fr" "success" "162.159.122.147" "Mozilla/5.0\ \(Windows\ NT\ 10.0\;\ Win64\;\ x64\)\ AppleWebKit/537.36\ \(KHTML\,\ like\ Gecko\)\ Chrome/151.0.0.0\ Safari/537.36"
+    #!!! "1786258459" "bernhara" "vin" "VF7BU9HD5HZ901660" "''" "162.159.122.147" "Mozilla/5.0\ \(Windows\ NT\ 10.0\;\ Win64\;\ x64\)\ AppleWebKit/537.36\ \(KHTML\,\ like\ Gecko\)\ Chrome/151.0.0.0\ Safari/537.36"
+
     stat_line="$@"
     
     # echo ">>>>>>>>>>>>>>>>>>>>>${protected_line}<<<<<<<<<<<<<<<<<<<<<"
