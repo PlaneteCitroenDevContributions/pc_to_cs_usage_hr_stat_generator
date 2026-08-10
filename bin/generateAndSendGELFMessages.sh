@@ -251,6 +251,7 @@ getUserDisplayNameFromID ()
     authenticate_user_id="$1"
     remote_user="$2"
 
+    # set default value for resulting user_display_name
     user_display_name=${authenticate_user_id}
 
     url="${NEXTCLOUD_API_URL}/${authenticate_user_id}?format=json"
@@ -263,25 +264,20 @@ getUserDisplayNameFromID ()
 	    -s \
 	    -o /tmp/cloud_user.json \
 	    -w "%{http_code}" \
-	    ${url}" )
-    if [ "${curl_http_code}" -eq 200 ]
+	    "${url}" )
+    if [[ "${curl_http_code}" == 200 ]]
     then
 	# "Got 200! All done!"
-	# keep result in cache
-	if grep -q '"error":true' /tmp/vin.json
-	then
-	    # resulting json mentions an error
-	    # TODO: manage these errors
-	    echo "ERROR while fetching url ${url} to decode VIN ${vin}: result $( cat /tmp/vin.json )" 1>&2
-	    return 1
-	    # NOT REACHED
+
+	statuscode=$( jq -r '.ocs.meta.statuscode' /tmp/cloud_user.json )
+	if [[ "${curl_http_code}" == 200 ]]
+	then	
+	    displayname=$( jq -r '.ocs.data.displayname' /tmp/cloud_user.json )
 	else
-	    cp /tmp/vin.json "${cache_file_name}"
+	    echo "ERROR while searching displayname for User ID ${authenticate_user_id}" 1>&2
 	fi
     else
-	echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
-	return 1
-	# NOT REACHED
+	echo "ERROR while fetching url ${url} to get Display Name for User ID ${authenticate_user_id}" 1>&2
     fi
     
     echo "${user_display_name}"
