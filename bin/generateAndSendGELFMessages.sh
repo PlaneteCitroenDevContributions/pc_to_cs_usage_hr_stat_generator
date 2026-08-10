@@ -242,6 +242,52 @@ get_vin_field_value_from_file ()
     fi
 }
 
+: ${NEXTCLOUD_API_URL:='https://cloud.forumtestplanetecitroen.fr/ocs/v2.php/cloud/users/'}
+: ${NEXTCLOUD_API_LOGIN:='bernhara_admin'}
+: ${NEXTCLOUD_API_PASSWORD:='DO NOT FORGET TO SET ME'}
+
+getUserDisplayNameFromID ()
+{
+    authenticate_user_id="$1"
+    remote_user="$2"
+
+    user_display_name=${authenticate_user_id}
+
+    url="${NEXTCLOUD_API_URL}/${authenticate_user_id}?format=json"
+    
+    curl_http_code=$(
+	curl \
+	    -X GET \
+	    -H 'OCS-APIRequest: true' \
+	    -u "${NEXTCLOUD_API_LOGIN}:${NEXTCLOUD_API_PASSWORD}" \
+	    -s \
+	    -o /tmp/cloud_user.json \
+	    -w "%{http_code}" \
+	    ${url}" )
+    if [ "${curl_http_code}" -eq 200 ]
+    then
+	# "Got 200! All done!"
+	# keep result in cache
+	if grep -q '"error":true' /tmp/vin.json
+	then
+	    # resulting json mentions an error
+	    # TODO: manage these errors
+	    echo "ERROR while fetching url ${url} to decode VIN ${vin}: result $( cat /tmp/vin.json )" 1>&2
+	    return 1
+	    # NOT REACHED
+	else
+	    cp /tmp/vin.json "${cache_file_name}"
+	fi
+    else
+	echo "ERROR while fetching url ${url} to decode VIN ${vin}: code ${curl_http_code}" 1>&2
+	return 1
+	# NOT REACHED
+    fi
+    
+    echo "${user_display_name}"
+}
+
+
 generateAndSendGELFLog ()
 {
     # FIXME: this example is no more relevant
@@ -270,7 +316,7 @@ generateAndSendGELFLog ()
     case "${action}" in
 
 	"login" )
-	    normalized_pc_login="${param}"
+	    normalized_pc_login=$( getUserDisplayNameFromID "${user}" "${param}" )
 	    ;;
 
 	"documentation" )
