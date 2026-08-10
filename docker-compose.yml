@@ -19,6 +19,9 @@ services:
         VINDECODER_EU_APIKEY: ${VINDECODER_EU_APIKEY?not set VINDECODER_EU_APIKEY}
         VINDECODER_EU_SECRET: ${VINDECODER_EU_SECRET?not set VINDECODER_EU_SECRET}
         DEBUG_BASH: 1
+     env_file:
+        - path: ./nextcloud_config.env
+          required: false
      volumes:
         - ./../ServiceBox4PC_BASIC_ReverseProxy/pc_stats/:/var/pc_stats/:ro
         - ./run_states_basic/:/var/run_states/
@@ -63,6 +66,9 @@ services:
         SLEEP_DELAY: 10m
         VINDECODER_EU_APIKEY: ${VINDECODER_EU_APIKEY?not set VINDECODER_EU_APIKEY}
         VINDECODER_EU_SECRET: ${VINDECODER_EU_SECRET?not set VINDECODER_EU_SECRET}
+     env_file:
+        - path: ./nextcloud_config.env
+          required: false
      volumes:
         - ./../ServiceBox4PC_PLUS_ReverseProxy/pc_stats/:/var/pc_stats/:ro
 #!! FOR TESTs        - ./../ServiceBox4PC_DEV_ReverseProxy/pc_stats/:/var/pc_stats/:ro
