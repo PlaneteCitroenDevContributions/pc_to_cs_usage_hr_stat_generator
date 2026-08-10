@@ -273,6 +273,7 @@ getUserDisplayNameFromID ()
 	if [[ "${curl_http_code}" == 200 ]]
 	then	
 	    displayname=$( jq -r '.ocs.data.displayname' /tmp/cloud_user.json )
+	    user_display_name=${displayname}
 	else
 	    echo "ERROR while searching displayname for User ID ${authenticate_user_id}" 1>&2
 	fi
