@@ -2,6 +2,8 @@
 # General
 #
 
+/nextcloud_config.env
+
 # Emacs backups
 *~
 \#*\#
