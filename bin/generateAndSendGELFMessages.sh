@@ -364,8 +364,6 @@ generateAndSendGELFLog ()
 
 	if [[ -n "${normalized_pc_login}" ]]
 	then
-	    #FIXME: normalized_pc_login is still used since old logs have been generated with that field
-	    # but it should be "remote_user"
 	    echo -n ', "_pc_login_normalized": "'${normalized_pc_login}'"'
 	fi
 	
