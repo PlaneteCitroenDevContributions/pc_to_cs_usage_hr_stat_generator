@@ -310,10 +310,13 @@ generateAndSendGELFLog ()
     doc_ref=''
     vin=''
 
+    normalized_pc_login=$( getUserDisplayNameFromID "${user}" "_some_param_for_backward_compatibity_" )
+
     case "${action}" in
 
 	"login" )
-	    normalized_pc_login=$( getUserDisplayNameFromID "${user}" "${param}" )
+	    # param is REMOTE_USER query param
+	    # nothing more to do
 	    ;;
 
 	"documentation" )
